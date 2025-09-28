@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MyGame | 公式デモサイト</title>
+  <meta name="description" content="“読み合い×育成”を3〜5分で体験。インストール不要のブラウザ対戦デモ。">
+  <link rel="icon" href="assets/images/favicon.ico">
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="./">MyGame</a>
+  <nav>
+    <a class="cta" href="demo.html">▶ 今すぐ遊ぶ</a>
+    <a href="concept/">コンセプト</a>
+    <a href="requirements/">要件定義</a>
+    <a href="pages/monsters.html">モンスター</a>
+    <a href="pages/moves.html">技</a>
+    <a href="pages/type-chart.html">相性表</a>
+    <a href="changelog.html">更新履歴</a>
+    <a target="_blank" href="https://github.com/OWNER/REPO/issues/new?labels=feedback&template=feedback.yml">✍ 感想・要望</a>
+  </nav>
+</header>
+<main class="container">
+  <section class="hero">
+    <h1>“読み合い×育成”を最短で体感</h1>
+    <p>3体編成・技4枠・属性/天候/罠/連続攻撃。1バトル3〜5分で駆け引きの旨味だけを凝縮。</p>
+    <p><a class="cta big" href="demo.html">▶ デモをプレイ</a></p>
+    <small id="ver"></small>
+  </section>
+  <section>
+    <h2>公開中の資料</h2>
+    <ul>
+      <li><a href="concept/overall.html">ゲーム全体のコンセプト</a></li>
+      <li><a href="concept/growth.html">育成システムのコンセプト</a></li>
+      <li><a href="concept/battle.html">対戦システムのコンセプト</a></li>
+      <li><a href="requirements/">要件定義（画面/システム/ロードマップ）</a></li>
+    </ul>
+  </section>
+</main>
+<footer class="site-footer">© MyGame</footer>
+<script src="assets/js/main.js"></script>
+<script>
+fetch('data/version.json').then(r=>r.json()).then(v=>{
+  document.getElementById('ver').textContent = `Game ${v.gameVersion} / Data ${v.dataVersion}`;
+});
+</script>
+</body>
+</html>
