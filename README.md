@@ -2,7 +2,7 @@
 GitHub Pages で公開するブラウザ向け対戦デモ。コンセプト/要件/データを併載。
 
 ## 公開URL
-https://waka6251-beep.github.io/mygame/
+https://wakapai-game.github.io/mygame/
 
 ## 構成
 - demo.html: デモ実行
