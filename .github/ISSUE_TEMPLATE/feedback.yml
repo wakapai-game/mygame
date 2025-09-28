@@ -1,24 +1,20 @@
-name: プレイ感想・要望
-description: 不具合/改善提案/バランス/操作性など何でもどうぞ
+name: 反馈 / フィードバック
+description: デモに対する提案・不具合報告はこちら
 labels: [feedback]
 body:
+  - type: input
+    id: page
+    attributes:
+      label: ページURL
+      placeholder: https://example.com/demo.html
   - type: dropdown
     id: type
     attributes:
       label: 種別
-      options: ["不具合","改善提案","バランス","UI/UX","その他"]
+      options: [不具合, 改善提案, コンテンツ, その他]
   - type: textarea
     id: detail
     attributes:
       label: 内容
-      description: 起きたこと/期待した動作/再現手順
-  - type: input
-    id: env
-    attributes:
-      label: 環境
-      placeholder: 例) iPhone 14 / iOS 18 / Safari
-  - type: input
-    id: ver
-    attributes:
-      label: ゲームバージョン
-      placeholder: 例) v0.3.1
+      description: 再現手順 / 期待する挙動 など
+      placeholder: 例）iPhone 13 / iOS 18 / Safari でスクロールが引っかかる

@@ -1,15 +1,23 @@
-# MyGame 公式デモサイト
-GitHub Pages で公開するブラウザ向け対戦デモ。コンセプト/要件/データを併載。
+# Monster Duel Web
 
-## 公開URL
-https://wakapai-game.github.io/mygame/
+ブラウザで遊べる「モンスター対戦」デモサイト。  
+**公開**: GitHub Pages（`Settings > Pages`）でブランチを `main`、フォルダを `/root` に設定。
 
 ## 構成
-- demo.html: デモ実行
-- concept/: 全体/育成/対戦のコンセプト
-- requirements/: 要件定義
-- data/: monsters.json / moves.json / types.json / version.json
-- pages/: JSONを表表示するビュー
+- `index.html` … TOP
+- `demo.html` … デモ埋め込み（`openDemo` ボタンの `data-demo-src` を公開URLへ）
+- `changelog.html` … `data/version.json` を読み込んで更新履歴を表示
+- `concept/*` … 世界観・育成・バトルの説明
+- `requirements/*` … 要件定義（ゲームプレイ／システム／ロードマップ）
+- `pages/*` … データ連動一覧（モンスター／技／属性相性）
+- `data/*` … JSON データ
+- `assets/css/site.css` `assets/js/*` … 共通アセット
 
-## フィードバック
-- GitHub Issues: https://github.com/OWNER/REPO/issues/new?labels=feedback&template=feedback.yml
+## ローカル動作
+静的ファイルのみ。VSCode Live Server などでOK。
+
+## データ差し替え
+`data/monsters.json`, `moves.json`, `types.json` を編集すると自動で反映。カラムを増やす場合は `assets/js/render-*.js` を調整。
+
+## ライセンス
+© Monster Duel Project

@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://username.github.io/mygame/</loc></url>
-  <url><loc>https://username.github.io/mygame/concept/</loc></url>
-  <url><loc>https://username.github.io/mygame/concept/overall.html</loc></url>
-  <url><loc>https://username.github.io/mygame/concept/growth.html</loc></url>
-  <url><loc>https://username.github.io/mygame/concept/battle.html</loc></url>
-  <url><loc>https://username.github.io/mygame/requirements/</loc></url>
-  <url><loc>https://username.github.io/mygame/pages/monsters.html</loc></url>
-  <url><loc>https://username.github.io/mygame/pages/moves.html</loc></url>
-  <url><loc>https://username.github.io/mygame/pages/type-chart.html</loc></url>
-  <url><loc>https://username.github.io/mygame/changelog.html</loc></url>
+  <url><loc>https://<username>.github.io/mygame/</loc></url>
+  <url><loc>https://<username>.github.io/mygame/demo.html</loc></url>
+  <url><loc>https://<username>.github.io/mygame/changelog.html</loc></url>
+
+  <url><loc>https://<username>.github.io/mygame/concept/</loc></url>
+  <url><loc>https://<username>.github.io/mygame/concept/overall.html</loc></url>
+  <url><loc>https://<username>.github.io/mygame/concept/growth.html</loc></url>
+  <url><loc>https://<username>.github.io/mygame/concept/battle.html</loc></url>
+
+  <url><loc>https://<username>.github.io/mygame/requirements/</loc></url>
+  <url><loc>https://<username>.github.io/mygame/requirements/gameplay.html</loc></url>
+  <url><loc>https://<username>.github.io/mygame/requirements/system.html</loc></url>
+  <url><loc>https://<username>.github.io/mygame/requirements/roadmap.html</loc></url>
+
+  <url><loc>https://<username>.github.io/mygame/pages/monsters.html</loc></url>
+  <url><loc>https://<username>.github.io/mygame/pages/moves.html</loc></url>
+  <url><loc>https://<username>.github.io/mygame/pages/type-chart.html</loc></url>
 </urlset>

@@ -1,50 +1,103 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MyGame | 公式デモサイト</title>
-  <meta name="description" content="“読み合い×育成”を3〜5分で体験。インストール不要のブラウザ対戦デモ。">
-  <link rel="icon" href="assets/images/favicon.ico">
-  <link rel="stylesheet" href="assets/css/site.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>モンスター対戦｜公式デモサイト</title>
+  <meta name="description" content="読み合いと駆け引きがアツい“モンスター対戦”の公式デモ。30秒で世界観とルールがわかり、そのままブラウザで体験開始。">
+  <meta name="theme-color" content="#0b0f16" />
+  <link rel="stylesheet" href="./assets/css/site.css" />
 </head>
 <body>
-<header class="site-header">
-  <a class="logo" href="./">MyGame</a>
-  <nav>
-    <a class="cta" href="demo.html">▶ 今すぐ遊ぶ</a>
-    <a href="concept/">コンセプト</a>
-    <a href="requirements/">要件定義</a>
-    <a href="pages/monsters.html">モンスター</a>
-    <a href="pages/moves.html">技</a>
-    <a href="pages/type-chart.html">相性表</a>
-    <a href="changelog.html">更新履歴</a>
-    <a target="_blank" href="https://github.com/OWNER/REPO/issues/new?labels=feedback&template=feedback.yml">✍ 感想・要望</a>
-  </nav>
-</header>
-<main class="container">
-  <section class="hero">
-    <h1>“読み合い×育成”を最短で体感</h1>
-    <p>3体編成・技4枠・属性/天候/罠/連続攻撃。1バトル3〜5分で駆け引きの旨味だけを凝縮。</p>
-    <p><a class="cta big" href="demo.html">▶ デモをプレイ</a></p>
-    <small id="ver"></small>
-  </section>
-  <section>
-    <h2>公開中の資料</h2>
-    <ul>
-      <li><a href="concept/overall.html">ゲーム全体のコンセプト</a></li>
-      <li><a href="concept/growth.html">育成システムのコンセプト</a></li>
-      <li><a href="concept/battle.html">対戦システムのコンセプト</a></li>
-      <li><a href="requirements/">要件定義（画面/システム/ロードマップ）</a></li>
+  <!-- Header -->
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="トップへ">
+      <span class="brand__logo" aria-hidden="true">★</span>
+      <span class="brand__text">Monster Duel</span>
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">MENU</button>
+    <nav id="nav" class="nav" aria-expanded="false">
+      <a href="./demo.html">デモ</a>
+      <a href="./changelog.html">更新情報</a>
+      <a href="./pages/monsters.html">モンスター</a>
+      <a href="./pages/moves.html">技</a>
+      <a href="./pages/type-chart.html">相性表</a>
+      <a href="./concept/">コンセプト</a>
+      <a href="./requirements/">要件定義</a>
+    </nav>
+  </header>
+
+  <!-- Decorative Background -->
+  <div class="bg" aria-hidden="true">
+    <canvas id="stars"></canvas>
+    <div class="gradient"></div>
+    <svg class="blob" viewBox="0 0 600 600">
+      <g transform="translate(300,300)">
+        <path d="M120,-162C162,-137,198,-108,211,-69C224,-30,214,20,195,61C176,102,147,133,111,165C75,197,33,229,-5,238C-43,247,-86,233,-131,214C-176,195,-224,170,-250,130C-276,89,-279,33,-263,-16C-246,-66,-210,-108,-171,-138C-132,-169,-90,-187,-50,-194C-10,-201,29,-198,67,-189C105,-180,141,-165,120,-162Z"></path>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Hero -->
+  <main id="top" class="hero" role="main">
+    <div class="hero__content">
+      <p class="eyebrow">戦略×読み合い×一瞬の判断</p>
+      <h1 class="hero__title">人気者になれる<br>モンスター対戦ゲーム</h1>
+      <p class="hero__lead">
+        3体のモンスターでデッキを組み、技を選び、相手の手を読む。<br>
+        30秒でルールがわかる、ブラウザでそのまま遊べる対戦デモ。
+      </p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="./demo.html">▶︎ デモを今すぐ遊ぶ</a>
+        <a class="btn" href="./concept/">30秒で世界観と遊び方</a>
+      </div>
+      <ul class="badges" aria-label="強み">
+        <li>インストール不要</li>
+        <li>スマホ&PC対応</li>
+        <li>1バトル1〜3分</li>
+      </ul>
+    </div>
+
+    <figure class="hero__preview" aria-label="ゲーム画面イメージ">
+      <div class="screen">
+        <div class="screen__hud"><span>HP 120 / 120</span><span>ATK↑</span><span>雨</span></div>
+        <div class="screen__arena">
+          <div class="mon mon--ally"></div>
+          <div class="mon mon--enemy"></div>
+        </div>
+        <div class="screen__cmd">
+          <button class="chip">攻撃</button>
+          <button class="chip">入れ替え</button>
+          <button class="chip">防御</button>
+          <button class="chip">特殊</button>
+        </div>
+      </div>
+      <figcaption>※イメージ／実際のデモは「デモ」ページから</figcaption>
+    </figure>
+  </main>
+
+  <!-- Features -->
+  <section class="section section--grid" aria-labelledby="features-title">
+    <div class="section__head">
+      <h2 id="features-title">ゲームの魅力</h2>
+    </div>
+    <ul class="feature-grid">
+      <li><h3>短時間で熱い駆け引き</h3><p>1バトル1〜3分。スキマ時間にサクッと。</p></li>
+      <li><h3>ビルドの自由度</h3><p>技×役割の組み合わせで無数の戦術。</p></li>
+      <li><h3>リプレイ共有</h3><p>対戦履歴をURL化。SNSで議論。</p></li>
+      <li><h3>スマホ最適化</h3><p>縦横どちらでも操作しやすいUI。</p></li>
     </ul>
   </section>
-</main>
-<footer class="site-footer">© MyGame</footer>
-<script src="assets/js/main.js"></script>
-<script>
-fetch('data/version.json').then(r=>r.json()).then(v=>{
-  document.getElementById('ver').textContent = `Game ${v.gameVersion} / Data ${v.dataVersion}`;
-});
-</script>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> Monster Duel Project</p>
+    <nav>
+      <a href="./robots.txt">robots</a>
+      <span aria-hidden="true">·</span>
+      <a href="./sitemap.xml">sitemap</a>
+    </nav>
+  </footer>
+
+  <script src="./assets/js/main.js" defer></script>
 </body>
 </html>
