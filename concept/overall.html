@@ -1,311 +1,190 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ゲームのコンセプト</title>
-  <meta name="description" content="モンスター育成・パーティー構築でプレイヤーのクリエイティブさを引き出し、対戦で読み合い・駆け引きの魅力を表現するゲームの提案依頼書（コンセプト、設計方針、体験価値、開発方針）。" />
-  <link rel="canonical" href="https://example.github.io/your-repo/" />
-  <!-- ① GitHub Pagesに置く場合は href を実URLに変更 -->
-
-  <!-- ② OGP / Twitter -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="提案依頼書｜モンスター育成対戦ゲームのコンセプト" />
-  <meta property="og:description" content="モンスター育成・パーティー構築でプレイヤーのクリエイティブさを引き出し、対戦で読み合い・駆け引きの魅力を表現するゲームの提案依頼書。" />
-  <meta property="og:image" content="https://example.github.io/your-repo/ogp.png" />
-  <meta property="og:url" content="https://example.github.io/your-repo/" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <!-- ③ OGP画像 (1200x630 推奨) を ogp.png として配置 -->
-
-  <!-- ④ Favicon (任意) -->
-  <link rel="icon" href="/favicon.ico" />
-
-  <!-- ⑤ 構造化データ（組織＋WebPageの最小） -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "ゲームのコンセプト",
-    "description": "モンスター育成・パーティー構築でプレイヤーのクリエイティブさを引き出し、対戦で読み合い・駆け引きの魅力を表現するゲームの提案（コンセプト、設計方針、体験価値、開発方針）。",
-    "inLanguage": "ja"
-  }
-  </script>
-
-  <style>
-    :root{
-      color-scheme: light dark;
-      --bg:#0f1115; --card:#141821; --text:#e8ebf0; --muted:#a9b1c6; --accent:#7aa2f7; --border:#222837;
-      --bg-light:#f8f9fb; --card-light:#ffffff; --text-light:#0f1115; --muted-light:#5a6478; --border-light:#e8eaf3; --accent-light:#2457ff;
-    }
-    *{ box-sizing:border-box }
-    html{ scroll-behavior:smooth }
-    body{
-      margin:0; line-height:1.8; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans JP", YuGothic, sans-serif;
-      background: var(--bg); color: var(--text);
-      background-image: linear-gradient(180deg, #0c0e13, #0f1115);
-      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-      padding: 32px 16px 64px;
-    }
-    @media (prefers-color-scheme: light){
-      body{ background: var(--bg-light); color: var(--text-light); padding: 24px 16px 64px; }
-      .container{ background: var(--card-light); border-color: var(--border-light); box-shadow: 0 10px 26px rgba(0,0,0,.06); }
-      header{ background: linear-gradient(135deg, rgba(36,87,255,.08), rgba(36,87,255,0)); }
-      nav.toc{ background: #f7f8fc; border-color: var(--border-light); }
-      h2{ color: var(--accent-light); border-color: var(--border-light); }
-      h3{ color: #1d3eff; }
-      .lead{ background:#f5f7ff; border-color: var(--border-light); }
-      .note{ background:#f0f4ff; border-left-color: var(--accent-light); }
-      a{ color: var(--accent-light); }
-    }
-    .container{
-      max-width: 960px; margin: 0 auto; background: var(--card); color: inherit;
-      border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-    header{ padding: 28px 28px 12px; border-bottom: 1px solid var(--border);
-            background: linear-gradient(135deg, rgba(122,162,247,.15), rgba(122,162,247,0)); }
-    header h1{ margin:0 0 8px; font-size: clamp(20px, 4vw, 28px); letter-spacing:.02em; }
-    header p{ margin:0; color: var(--muted); font-size: 14px; }
-
-    .lead{ margin: 16px 28px; padding:16px; border:1px solid var(--border); border-radius: 12px;
-           background: rgba(122,162,247,.07); }
-
-    nav.toc{ padding: 16px 28px; border-top:1px dashed var(--border); border-bottom:1px dashed var(--border); background: rgba(20,24,33,.5); }
-    nav.toc h2{ font-size:16px; margin:0 0 8px; color: var(--accent); }
-    nav.toc ul{ margin:0; padding-left: 18px; columns: 2; column-gap: 24px; }
-    nav.toc li{ margin:6px 0; }
-    nav.toc a{ color: inherit; text-decoration: none; border-bottom: 1px dotted transparent; }
-    nav.toc a:hover{ color: var(--accent); border-color: var(--accent); }
-    @media (max-width: 720px){ nav.toc ul{ columns:1; } }
-
-    main{ padding: 24px 28px 40px; }
-    h2{ font-size: clamp(18px, 3vw, 24px); margin: 28px 0 10px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--accent); }
-    h3{ font-size: 18px; margin: 20px 0 8px; color: #c0caf5; }
-    p{ margin: 12px 0; }
-    ul, ol{ margin: 8px 0 16px 24px; }
-    li{ margin: 6px 0; }
-    .note{ margin-top: 20px; padding: 14px 16px; background: rgba(122,162,247,.08); border-left: 3px solid var(--accent); border-radius: 8px; }
-
-    .top-link{ position: fixed; right: 16px; bottom: 16px; font-size: 13px; background: var(--card);
-               color: inherit; border: 1px solid var(--border); padding: 10px 12px; border-radius: 999px;
-               text-decoration: none; box-shadow: 0 6px 16px rgba(0,0,0,.25); }
-    .top-link:hover{ color: var(--accent); border-color: var(--accent); }
-
-    footer{ padding: 16px 28px 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; background: rgba(20,24,33,.5); }
-  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>全体像（Overall）｜コンセプト｜Monster Duel</title>
+  <meta name="description" content="開発中のモンスター育成対戦ゲームのコンセプトと設計方針の全体像。駆け引きの深さと直感的な分かりやすさを両立し、プレイ自体をエンタメ化する狙いを整理。">
+  <link rel="stylesheet" href="../assets/css/site.css" />
 </head>
 <body>
-  <a class="top-link" href="#top" title="トップへ">▲ Top</a>
-  <div class="container" id="top">
-    <header>
-      <h1>ゲームコンセプト</h1>
-      <p>モンスター育成 × 対戦 × パーティー構築で、駆け引きの深さと分かりやすさを両立する。</p>
-    </header>
+<header class="site-header">
+  <a class="brand" href="../">Monster Duel</a>
+  <nav class="nav">
+    <a href="./">コンセプトTOP</a>
+    <a href="./growth.html">育成</a>
+    <a href="./battle.html">バトル</a>
+    <a href="../">サイトTOP</a>
+  </nav>
+</header>
 
-    <!-- 概要（Canvasの冒頭要約をHTMLに反映） -->
-    <div class="lead">
-      <p>このページは、開発中のモンスター育成対戦ゲームのコンセプトや設計方針を整理したものです。</p>
-      <ul>
-        <li>背景と目的</li>
-        <li>ゲームコンセプトと人気者の定義</li>
-        <li>プレイヤーの魅力を引き出す仕組み（育成・構築・駆け引き）</li>
-        <li>駆け引きの演出とテンポ設計</li>
-        <li>人気が生まれる流れと観客参加</li>
-        <li>プレイヤー体験価値</li>
-        <li>開発方針とフィードバック依頼事項</li>
-      </ul>
-      <p><strong>本ゲームが「駆け引きの深さ」と「直感的な分かりやすさ」を両立し、プレイヤーのプレイをエンターテインメントにすることを目指している</strong>点が理解できます。</p>
+<main class="section" id="top">
+  <!-- ページ導入 -->
+  <header class="section__head">
+    <p class="eyebrow">Concept · Overview</p>
+    <h1>全体像（Overall）</h1>
+    <p class="sub">
+      このページは、開発中のモンスター育成対戦ゲームのコンセプトや設計方針を整理したものです。<br>
+      <strong>本ゲームが「駆け引きの深さ」と「直感的な分かりやすさ」を両立し、プレイヤーのプレイをエンターテインメントにする</strong>ことを目指している点が理解できます。
+    </p>
+  </header>
+
+  <!-- 目次（ページ内ナビ） -->
+  <nav class="cards" aria-label="ページ内ナビ">
+    <a class="card link-card" href="#bg-purpose"><h3>1. 背景</h3><p>狙いと従来との差分</p></a>
+    <a class="card link-card" href="#concept"><h3>2. ゲームコンセプト</h3><p>二軸で魅力を引き出す</p></a>
+    <a class="card link-card" href="#popularity"><h3>3. 人気者の定義</h3><p>結果として人気が集まる</p></a>
+    <a class="card link-card" href="#design-pull"><h3>4. 魅力を引き出す設計</h3><p>参入障壁を下げる</p></a>
+    <a class="card link-card" href="#mindgame"><h3>5. 駆け引き演出</h3><p>リスク/リターン設計</p></a>
+    <a class="card link-card" href="#tempo"><h3>6. テンポ設計</h3><p>短時間で満足感</p></a>
+    <a class="card link-card" href="#pop-flow"><h3>7. 人気が生まれる流れ</h3><p>勝利×駆け引き×魅せ</p></a>
+    <a class="card link-card" href="#audience"><h3>8. 観客参加</h3><p>観戦映えとSNS設計</p></a>
+    <a class="card link-card" href="#value"><h3>9. 体験価値</h3><p>勝利/承認/表現</p></a>
+    <a class="card link-card" href="#dev-policy"><h3>10. 開発方針</h3><p>深さ×分かりやすさ</p></a>
+    <a class="card link-card" href="#feedback"><h3>11. フィードバック依頼</h3><p>確認ポイント</p></a>
+    <a class="card link-card" href="#summary"><h3>12. まとめ</h3><p>ゴール像の再確認</p></a>
+  </nav>
+
+  <!-- 1 背景 -->
+  <section id="bg-purpose" class="card" style="margin-top:1rem;">
+    <h2>1. 背景と目的</h2>
+    <p>従来の対戦ゲームは、操作テクニックや派手な技で差別化されることが多い。しかし本提案では、<strong>駆け引きや心理戦の面白さ</strong>を核に据え、さらに<strong>モンスター育成でプレイヤーの個性</strong>を引き出す新しい体験を目指す。</p>
+    <p>特徴は、<strong>プレイヤーのプレイそのものがエンターテインメント</strong>となり、観戦者を感動・楽しませ、リスペクトを得られる点にある。</p>
+    <p class="sub">設計キーワード：直感 / 読み合い / シェア可能性 / リスペクト</p>
+  </section>
+
+  <!-- 2 コンセプト -->
+  <section id="concept" class="card">
+    <h2>2. ゲームコンセプト</h2>
+    <ul>
+      <li><strong>育成・構築</strong>でプレイヤーのクリエイティブさを発揮</li>
+      <li><strong>対戦</strong>で読み合い・駆け引きの巧さが際立つ</li>
+    </ul>
+    <p>育成での創造性と、対戦での心理戦。この二軸を通じて、<strong>プレイヤーの個性が観客に伝わる</strong>ゲームを目指す。</p>
+  </section>
+
+  <!-- 3 人気者とは -->
+  <section id="popularity" class="card">
+    <h2>3. 人気者になるとは？</h2>
+    <ul>
+      <li>「人気者になろう」ではなく、<strong>魅せる試合の積み重ねの結果として人気が集まる</strong>。</li>
+      <li>SNS活用プレイヤーが<strong>フォロワー1万人</strong>を狙える土壌を用意。</li>
+      <li>行動や戦術が称賛・リスペクトを呼び、人気へとつながる。</li>
+    </ul>
+  </section>
+
+  <!-- 4 魅力を引き出す設計 -->
+  <section id="design-pull" class="card">
+    <h2>4. プレイヤーの魅力を引き出す設計方針</h2>
+    <div class="feature-grid">
+      <div><h3>4.1 要素</h3><p><strong>クリエイティブさ / 読み合い / 駆け引き</strong>が見える化されるUI。</p></div>
+      <div><h3>4.2 参入障壁を下げる</h3><p>操作はシンプル。未経験者でも<strong>観て直感理解</strong>できる。</p></div>
     </div>
+    <div class="cards">
+      <article class="card"><h3>4.3 育成</h3><p>自分だけのモンスターを育て個性を反映。</p></article>
+      <article class="card"><h3>4.3 構築</h3><p>育成×パーティー構築で戦術を創る。</p></article>
+      <article class="card"><h3>4.3 個性の可視化</h3><p>選択の違いがそのまま<strong>プレイヤー像</strong>として伝わる。</p></article>
+    </div>
+  </section>
 
-    <nav class="toc" aria-label="目次">
-      <h2>目次</h2>
+  <!-- 5 駆け引き演出 -->
+  <section id="mindgame" class="card">
+    <h2>5. 駆け引きの面白さを演出する仕組み</h2>
+    <ul>
+      <li><strong>リスク×リターン</strong>が常に同居する設計</li>
+      <li><strong>一手の重み</strong>が勝敗・評価に直結</li>
+      <li><strong>観戦映え</strong>する心理戦の可視化（ログ/リプレイ/解説UI）</li>
+    </ul>
+  </section>
+
+  <!-- 6 テンポ設計 -->
+  <section id="tempo" class="card">
+    <h2>6. スピーディーでストレスを感じない設計</h2>
+    <ul>
+      <li>待ち時間の最小化 / 入力即時反映</li>
+      <li>短時間で<strong>満足感</strong>を得られる展開</li>
+      <li>快適UIで駆け引きに集中できる環境</li>
+    </ul>
+  </section>
+
+  <!-- 7 人気が生まれる流れ -->
+  <section id="pop-flow" class="card">
+    <h2>7. 人気が生まれる仕組み</h2>
+    <ol class="howto">
+      <li><strong>勝利</strong> — 実力の証明</li>
+      <li><strong>駆け引きの巧さ</strong> — 観客を唸らせる</li>
+      <li><strong>魅せる試合</strong> — クリップ化で拡散</li>
+    </ol>
+  </section>
+
+  <!-- 8 観客参加 -->
+  <section id="audience" class="card">
+    <h2>8. 観客を巻き込む仕組み</h2>
+    <ul>
+      <li>対戦＝<strong>観戦コンテンツ</strong>として成立</li>
+      <li>勝敗以上に<strong>過程（読み合い）</strong>が盛り上がる</li>
+      <li><strong>SNSシェア前提</strong>の演出（リプレイURL / ハイライト生成）</li>
+    </ul>
+  </section>
+
+  <!-- 9 体験価値 -->
+  <section id="value" class="card">
+    <h2>9. プレイヤー体験価値</h2>
+    <div class="feature-grid">
+      <div><h3>勝利の爽快感</h3><p>短時間でも手応えのある達成。</p></div>
+      <div><h3>読み勝ちの承認</h3><p>リスペクトが可視化されるUI。</p></div>
+      <div><h3>表現としての育成・構築</h3><p>戦術そのものが自己表現。</p></div>
+      <div><h3>人気の獲得</h3><p>自然な拡散でフォロワー増加へ。</p></div>
+    </div>
+  </section>
+
+  <!-- 10 開発方針 -->
+  <section id="dev-policy" class="card">
+    <h2>10. 開発方針</h2>
+    <ul>
+      <li><strong>駆け引きの深さ × 分かりやすさ</strong>を最優先</li>
+      <li><strong>プレイして楽しい × 観て直感的に面白い</strong>を両立</li>
+      <li>開発段階から<strong>フィードバックを継続的</strong>に取り込み改善</li>
+    </ul>
+  </section>
+
+  <!-- 11 フィードバック -->
+  <section id="feedback" class="card">
+    <h2>11. フィードバック依頼事項</h2>
+    <details open>
+      <summary>確認してほしいポイント</summary>
       <ul>
-        <li><a href="#sec1">1. 背景</a></li>
-        <li><a href="#sec2">2. ゲームコンセプト</a></li>
-        <li><a href="#sec3">3. 人気者になるとは？</a></li>
-        <li><a href="#sec4">4. プレイヤーの魅力を引き出す設計方針</a></li>
-        <li><a href="#sec5">5. 駆け引きの面白さを演出する仕組み</a></li>
-        <li><a href="#sec6">6. スピーディーでストレスを感じない設計</a></li>
-        <li><a href="#sec7">7. 人気が生まれる仕組み</a></li>
-        <li><a href="#sec8">8. 観客を巻き込む仕組み</a></li>
-        <li><a href="#sec9">9. プレイヤー体験価値</a></li>
-        <li><a href="#sec10">10. 開発方針</a></li>
-        <li><a href="#sec11">11. フィードバック依頼事項</a></li>
-        <li><a href="#sec12">12. まとめ</a></li>
+        <li>育成・構築要素は十分に<strong>クリエイティブ</strong>さを引き出しているか？</li>
+        <li><strong>勝利</strong>と<strong>駆け引き</strong>の比重は適切か？</li>
+        <li>観戦者にとって<strong>エンタメ性</strong>があるか？</li>
+        <li><strong>SNS拡散</strong>されやすい仕組みか？</li>
+        <li>コンセプトに<strong>不明点/矛盾</strong>はないか？</li>
       </ul>
-    </nav>
+    </details>
+    <p class="sub">ご意見は <a class="link" href="https://github.com/<username>/mygame/issues/new?labels=feedback" target="_blank" rel="noopener">GitHub Issues（feedback）</a> まで。</p>
+  </section>
 
-    <main>
-      <section id="sec1">
-        <h2>1. 背景</h2>
-        <p>従来の対戦ゲームは、操作テクニックや派手な技で差別化されることが多い。<br>
-        しかし本提案では、<strong>駆け引きや心理戦の面白さを核に据え、さらにモンスター育成要素でプレイヤーの個性を引き出す新しいゲーム体験</strong>を目指す。</p>
-        <p>本ゲームの特徴は、<strong>プレイヤーのプレイそのものがエンターテインメントとなり、観戦者を感動・楽しませ、リスペクトを得られる</strong>点にある。</p>
-      </section>
+  <!-- 12 まとめ / CTA -->
+  <section id="summary" class="card">
+    <h2>12. まとめ</h2>
+    <p>
+      本ゲームは、<strong>モンスター育成・パーティー構築</strong>でプレイヤーのクリエイティブさを引き出し、<strong>対戦</strong>で読み合い・駆け引きの魅力を表現することを目的とする。<br>
+      プレイ自体がエンタメとなり、<strong>称賛・リスペクト</strong>を呼び、結果的に<strong>人気者（SNS 1万人）</strong>へつながる体験を設計する。
+    </p>
+    <div class="demo-actions" style="margin-top:.6rem">
+      <a class="btn btn--primary" href="../demo.html">▶ デモを試す</a>
+      <a class="btn" href="./growth.html">育成を詳しく</a>
+      <a class="btn" href="./battle.html">バトルを詳しく</a>
+    </div>
+  </section>
 
-      <section id="sec2">
-        <h2>2. ゲームコンセプト</h2>
-        <p>本ゲームは、<strong>プレイヤーの魅力を最大限に引き出すこと</strong>を目的に設計する。</p>
-        <ul>
-          <li><strong>モンスター育成・パーティー構築</strong>によって、プレイヤーのクリエイティブさを発揮させる</li>
-          <li><strong>モンスター対戦</strong>によって、プレイヤーの読み合い・駆け引きの巧さを際立たせる</li>
-        </ul>
-        <p>育成での創造性と、対戦での心理戦。<br>
-        この二軸を通じて、プレイヤーの個性が観客に伝わるゲームを目指す。</p>
-      </section>
+  <!-- 上部へ戻る -->
+  <p style="margin-top:1rem"><a class="link" href="#top">▲ ページ上部へ戻る</a></p>
+</main>
 
-      <section id="sec3">
-        <h2>3. 人気者になるとは？</h2>
-        <ul>
-          <li>プレイヤーが直接「人気者になろう」と目指すのではなく、<strong>勝利や魅力ある試合を通じて結果的に人気が集まる</strong>。</li>
-          <li>目標として、SNSを活用しているプレイヤーが本ゲームを通じてフォロワー1万人を獲得できるようなゲームを目指す。</li>
-          <li>プレイヤーの行動や戦術が称賛・リスペクトを呼び、人気へとつながる。</li>
-        </ul>
-      </section>
-
-      <section id="sec4">
-        <h2>4. プレイヤーの魅力を引き出す設計方針</h2>
-        <h3>4.1 魅力を引き出す要素</h3>
-        <ul>
-          <li><strong>クリエイティブさ</strong>：モンスター育成・パーティー構築の工夫</li>
-          <li><strong>読み合い</strong>：相手の行動を先読みする戦略性</li>
-          <li><strong>駆け引き</strong>：心理戦を通じたプレイの妙</li>
-        </ul>
-
-        <h3>4.2 参入障壁を下げる設計</h3>
-        <ul>
-          <li>テクニック依存を排除し、操作はシンプルに</li>
-          <li>未経験者でも観て直感的に理解できる分かりやすさ</li>
-          <li>判断や選択の工夫そのものがプレイヤーの魅力として表れる</li>
-        </ul>
-
-        <h3>4.3 クリエイティブさを体現する仕組み</h3>
-        <ul>
-          <li><strong>モンスター育成要素</strong>：プレイヤーが自分だけのモンスターを育てる</li>
-          <li><strong>パーティー（デッキ）構築</strong>：育てたモンスターを自由に組み合わせて戦術を作る</li>
-          <li><strong>個性の反映</strong>：育成・構築の選択がそのままプレイヤーの個性や魅力として表れる</li>
-        </ul>
-      </section>
-
-      <section id="sec5">
-        <h2>5. 駆け引きの面白さを演出する仕組み</h2>
-        <ul>
-          <li><strong>リスクとリターンの両立</strong>：すべての選択に緊張感を伴わせる</li>
-          <li><strong>一手ごとの重み</strong>：行動が勝敗や観客の評価に直結する</li>
-          <li><strong>観戦映えする心理戦</strong>：過程そのものがエンターテインメントになる</li>
-        </ul>
-      </section>
-
-      <section id="sec6">
-        <h2>6. スピーディーでストレスを感じない設計</h2>
-        <ul>
-          <li>待ち時間を最小化し、スムーズにプレイが進行</li>
-          <li>入力レスポンスを即時に反映</li>
-          <li>試合展開を軽快にし、短時間でも満足感が得られる</li>
-          <li>操作やUIの快適さを徹底し、駆け引きに集中できる環境を提供</li>
-        </ul>
-      </section>
-
-      <section id="sec7">
-        <h2>7. 人気が生まれる仕組み</h2>
-        <ol>
-          <li><strong>勝利</strong>：実力を証明する</li>
-          <li><strong>駆け引きの巧さ</strong>：観客を唸らせるプレイ</li>
-          <li><strong>魅せる試合</strong>：SNSで拡散されやすい瞬間を創出</li>
-        </ol>
-        <p>この3要素が組み合わさることで、リスペクトと人気が自然に生まれる。</p>
-      </section>
-
-      <section id="sec8">
-        <h2>8. 観客を巻き込む仕組み</h2>
-        <ul>
-          <li>対戦そのものを「観戦コンテンツ」として成立させる</li>
-          <li>勝敗以上に駆け引きが盛り上がりの中心になる</li>
-          <li>SNSシェアを前提にしたクリップ化しやすい演出</li>
-        </ul>
-      </section>
-
-      <section id="sec9">
-        <h2>9. プレイヤー体験価値</h2>
-        <ul>
-          <li>勝利の爽快感</li>
-          <li>読み勝ったときのリスペクト</li>
-          <li>育成・構築で個性を表現する楽しさ</li>
-          <li>結果的に人気者となっていく承認体験</li>
-        </ul>
-      </section>
-
-      <section id="sec10">
-        <h2>10. 開発方針</h2>
-        <ul>
-          <li><strong>駆け引きの深さ × 分かりやすさ</strong>の両立を最優先</li>
-          <li>「プレイして楽しい」「観て直感的に面白い」の両面を重視</li>
-          <li>開発段階からプレイヤーのフィードバックを積極的に取り入れ改善</li>
-        </ul>
-      </section>
-
-      <section id="sec11">
-        <h2>11. フィードバック依頼事項</h2>
-        <ul>
-          <li>育成・構築要素は十分にクリエイティブさを引き出しているか？</li>
-          <li>勝利と駆け引きの比重は適切か？</li>
-          <li>観戦者にとってエンタメ性があるか？</li>
-          <li>SNSで共有されやすい仕組みになっているか？</li>
-          <li>コンセプトに不明点や矛盾はないか？</li>
-        </ul>
-        <div class="note">ご意見は Issue/コメントでフィードバックをお願いします。</div>
-      </section>
-
-      <section id="sec12">
-        <h2>12. まとめ</h2>
-        <p>本ゲームは、<strong>モンスター育成・パーティー構築でプレイヤーのクリエイティブさを引き出し、対戦で読み合い・駆け引きの魅力を表現する</strong>ことを目的とする。<br>
-        プレイヤーのプレイがエンターテインメントとなり、観客を楽しませ、称賛・リスペクトを呼び、結果的に人気（SNSフォロワー1万人）へとつながる。</p>
-        <div class="note">👉 本提案に対するご意見・改善点をぜひお寄せください。</div>
-      </section>
-    </main>
-
-    <footer>
-      © ゲームコンセプト提案 — Draft
-      <span id="copyLink" style="margin-left:12px; cursor:pointer;">🔗 この見出しのリンクをコピー</span>
-    </footer>
-  </div>
-
-  <script>
-    // 目次クリック時に位置を少し下げて見やすく（固定ヘッダ対策不要なら不要）
-    document.querySelectorAll('a[href^="#sec"]').forEach(a=>{
-      a.addEventListener('click', e=>{
-        const id = a.getAttribute('href').slice(1);
-        const el = document.getElementById(id);
-        if(!el) return;
-        e.preventDefault();
-        const y = el.getBoundingClientRect().top + window.scrollY - 8;
-        window.scrollTo({ top:y, behavior:'smooth' });
-        history.replaceState(null, '', '#' + id);
-      });
-    });
-
-    // 見出しをクリックでURLコピー（共有しやすく）
-    [...document.querySelectorAll('h2, h3')].forEach(h=>{
-      if(!h.id){
-        // idが無い場合はテキストから生成
-        h.id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9一-龯ぁ-んァ-ン]+/g,'-').replace(/^-+|-+$/g,'');
-      }
-      h.style.cursor = 'pointer';
-      h.addEventListener('click', ()=>{
-        const url = location.origin + location.pathname + '#' + h.id;
-        navigator.clipboard.writeText(url).then(()=>{
-          h.dataset.copied = '1';
-          h.style.opacity = .8;
-          setTimeout(()=>{ h.style.opacity = 1; delete h.dataset.copied; }, 900);
-        });
-      });
-    });
-
-    // フッタのコピーリンク
-    document.getElementById('copyLink').addEventListener('click', ()=>{
-      navigator.clipboard.writeText(location.href);
-      alert('ページURLをコピーしました');
-    });
-  </script>
+<footer class="site-footer">
+  <p>© <span id="year"></span> Monster Duel Project</p>
+</footer>
+<script src="../assets/js/main.js" defer></script>
 </body>
 </html>
