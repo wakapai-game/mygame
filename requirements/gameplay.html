@@ -2,356 +2,398 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ゲームプレイ（Gameplay）｜要件定義｜Monster Duel</title>
-  <meta name="description" content="ブラウザで遊べるモンスター対戦ゲームの要件定義（ゲームプレイ編）。画面要件、データ仕様、バトルルール、演出、UI共通要件、検討事項、変更履歴、ファイル構成までをカードUIで整理。">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f16" />
+  <title>要件定義書｜Monster Duel</title>
+  <meta name="description" content="モンスター対戦ゲーム（仮） 要件定義書。目的、画面構成、データ仕様、バトルルール、演出、UI要件、フィードバック、ファイル構成、画面オブジェクト、開発者ガイド、検討事項、変更履歴。">
   <link rel="stylesheet" href="../assets/css/site.css" />
+  <style>
+    /* ---- 読みやすさ向上（内容は一切変更しません） ---- */
+    .req-wrap { max-width: 1040px; margin: 0 auto; padding: min(6vw, 32px); }
+    .req-hero { position: sticky; top: 0; z-index: 20; padding: 10px 0;
+      background: linear-gradient(180deg, rgba(11,15,22,.92), rgba(11,15,22,.65));
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--border);
+    }
+    .req-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .req-title { margin: 0; }
+    .chip { display:inline-block; padding:.2rem .6rem; border:1px solid var(--border); border-radius:999px; background:var(--glass); font-size:.8rem; color:var(--muted) }
+    .toc { display:grid; gap:.6rem; }
+    .toc a { display:block; padding:.55rem .75rem; border:1px solid var(--border); border-radius:10px; background:var(--glass); color:var(--muted); text-decoration:none }
+    .toc a:hover { color:#fff; border-color:#5bb8ff; }
+    .sec { margin-top: 18px; }
+    .card+.card { margin-top: 12px; }
+    .subtle { color: var(--muted); }
+    .kbd { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95em; }
+    details.req { border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--glass); }
+    details.req > summary { list-style:none; cursor:pointer; padding:.9rem 1rem; font-weight:700; }
+    details.req[open] > summary { border-bottom:1px solid var(--border); background: rgba(255,255,255,.02); }
+    details.req .box { padding: .9rem 1rem; }
+    .grid-2 { display:grid; gap:12px; }
+    @media (min-width: 980px){ .grid-2 { grid-template-columns: 1fr 1fr; } }
+    .top-btn { position:fixed; right:16px; bottom:16px; z-index:40 }
+    .list-tight li { margin:.35rem 0; }
+    .lead { font-size:1.05rem; color:var(--muted); }
+  </style>
 </head>
 <body>
-  <!-- 共通ヘッダー（overall.htmlと同意匠） -->
+  <!-- Header -->
   <header class="site-header">
-    <a class="brand" href="../">Monster Duel</a>
-    <nav class="nav">
-      <a href="./">要件定義TOP</a>
-      <a href="./gameplay.html" aria-current="page">ゲームプレイ</a>
-      <a href="./system.html">システム</a>
-      <a href="./roadmap.html">ロードマップ</a>
-      <a href="../concept/">コンセプト</a>
-      <a href="../">サイトTOP</a>
+    <a class="brand" href="../" aria-label="トップへ">
+      <span class="brand__logo" aria-hidden="true">★</span>
+      <span class="brand__text">Monster Duel</span>
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">MENU</button>
+    <nav id="nav" class="nav" aria-expanded="false">
+      <a href="../demo.html">デモ</a>
+      <a href="../concept/">世界観</a>
+      <a href="../pages/monsters.html">モンスター</a>
+      <a href="../pages/moves.html">技</a>
+      <a href="../pages/type-chart.html">相性表</a>
+      <a href="../concept/overall.html">コンセプト</a>
+      <a href="./">要件定義</a>
+      <a href="../changelog.html">更新情報</a>
     </nav>
   </header>
 
-  <main class="section" id="top">
-    <!-- ページ導入 -->
-    <header class="section__head">
-      <p class="eyebrow">Requirements · Gameplay</p>
-      <h1>ゲームプレイ（Gameplay）</h1>
-      <p class="sub">
-        このページは、ブラウザで遊べる「モンスター対戦ゲーム（仮）」の<strong>ゲームプレイ要件</strong>を整理したものです。<br>
-        モンスターを選び、技をセットし、コンピュータと対戦するまでの流れと各画面の要件、<strong>バトルルール/演出/UX方針</strong>をまとめています。
-      </p>
-    </header>
+  <!-- Sticky page header -->
+  <div class="req-hero">
+    <div class="req-wrap req-head">
+      <h1 class="req-title">モンスター対戦ゲーム（仮） 要件定義書</h1>
+      <span class="chip">ドキュメント</span>
+    </div>
+  </div>
 
-    <!-- 目次（ページ内ナビ / カードリンク） -->
-    <nav class="cards" aria-label="ページ内ナビ">
-      <a class="card link-card" href="#sec-title"><h3>ゲームタイトル</h3><p>正式名称（仮）</p></a>
-      <a class="card link-card" href="#sec-0"><h3>0. 目的</h3><p>狙いと位置づけ</p></a>
-      <a class="card link-card" href="#sec-1"><h3>1. 画面構成</h3><p>開始/選択/バトル</p></a>
-      <a class="card link-card" href="#sec-2"><h3>2. データ仕様</h3><p>モンスター/技</p></a>
-      <a class="card link-card" href="#sec-3"><h3>3. バトルルール</h3><p>計算式/相性</p></a>
-      <a class="card link-card" href="#sec-4"><h3>4. 攻撃演出</h3><p>簡易/発展</p></a>
-      <a class="card link-card" href="#sec-5"><h3>5. UI共通</h3><p>導線/状態保持</p></a>
-      <a class="card link-card" href="#sec-6"><h3>6. フィードバック</h3><p>定型メッセージ</p></a>
-      <a class="card link-card" href="#sec-7"><h3>7. 検討事項</h3><p>バックログ</p></a>
-      <a class="card link-card" href="#sec-8"><h3>8. 変更履歴</h3><p>更新ログ</p></a>
-      <a class="card link-card" href="#sec-9"><h3>9. ファイル構成</h3><p>ゲーム関連のみ</p></a>
-    </nav>
-
-    <!-- ゲームタイトル -->
-    <section id="sec-title" class="card" style="margin-top:1rem;">
-      <h2>ゲームタイトル</h2>
-      <p>本ゲームのタイトルは<strong>「モンスター対戦（仮）」</strong>とします。</p>
+  <main class="req-wrap">
+    <!-- 目次 -->
+    <section class="section">
+      <div class="card">
+        <strong class="chip">目次</strong>
+        <nav id="toc" class="toc" aria-label="目次">
+          <!-- JSで自動生成 -->
+        </nav>
+        <p class="subtle" style="margin-top:.5rem">※ 各セクションはクリックで開閉できます。内容は原文をそのまま収録しています。</p>
+      </div>
     </section>
 
-    <!-- 0. 目的 -->
-    <section id="sec-0" class="card" style="margin-top:1rem;">
-      <h2>0. 目的</h2>
-      <p>ブラウザで動作するゲームを試作し、実際にプレイヤーに遊んでもらう。</p>
-      <p>ゲームの訴求点や駆け引きの面白さを体験ベースで説明・検証する。</p>
-      <p>プレイヤーからフィードバックを集め、ゲームシステムをブラッシュアップする。</p>
-    </section>
-
-    <!-- 1. 画面構成と要件 -->
-    <section id="sec-1" class="card">
-      <h2>1. 画面構成と要件</h2>
-
-      <h3 id="sec-1-1">1.1 開始画面</h3>
-      <ul>
-        <li><strong>ゲームタイトル表示</strong>：「モンスター対戦ゲーム（仮）」を画面上部中央に大きく表示。</li>
-        <li><strong>画面名表示</strong>：「開始画面」ヘッダーを画面上部に常時表示。</li>
-        <li><strong>機能</strong>
-          <ul>
-            <li>ゲーム導入と遊び方の全体像を説明。</li>
-            <li>「▶ モンスターを選ぶ」ボタンでモンスター選択画面へ遷移。</li>
+    <!-- 0. ゲームタイトル -->
+    <section id="sec-0" class="sec">
+      <details class="req" open>
+        <summary>0. ゲームタイトル</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>本ゲームのタイトルは「モンスター対戦（仮）」とする。</li>
           </ul>
-        </li>
-        <li><strong>説明ウインドウ</strong>（下部常時表示、戻るボタン直上）
-          <ul>
-            <li>このゲームはモンスターを選び、技をセットしてバトルするブラウザゲームです。</li>
-            <li>ゲームのコンセプト：<a class="link" href="../concept/index.html">コンセプトTOP</a></li>
-            <li>要件定義の全体像：<a class="link" href="./index.html">要件定義TOP</a></li>
-          </ul>
-        </li>
-        <li><strong>戻るボタン</strong>：不要。</li>
-      </ul>
-
-      <h3 id="sec-1-2">1.2 モンスター選択画面</h3>
-      <ul>
-        <li><strong>画面名表示</strong>：「モンスター選択画面」ヘッダーを常時表示。</li>
-        <li><strong>機能</strong>
-          <ul>
-            <li>相手はランダムで6体を候補表示。</li>
-            <li>相手はその6体から3体を密かに選出して出場。</li>
-            <li>プレイヤーは全モンスターから3体を選択。</li>
-            <li>選択カウンター (n/3) を表示。</li>
-            <li>3体選択後「技を選ぶ」ボタンが有効化し、技選択へ遷移。</li>
-            <li>属性相対表（〇/△/×）を画面右または下部に簡易表示。</li>
-            <li>「おすすめを見る」押下で、候補分布から簡易提案（例：水が多い→炎を推奨）。</li>
-          </ul>
-        </li>
-        <li><strong>説明ウインドウ</strong>
-          <ul>
-            <li>相手は6体候補から3体を選びます（非公開）。</li>
-            <li>属性/ステータスを見て、出場3体を予測しながら自軍3体を選びましょう。</li>
-            <li>相性表とガイドを参考に構築。</li>
-          </ul>
-        </li>
-        <li><strong>戻る</strong>：下部中央。開始画面に戻る（選択は保持）。</li>
-      </ul>
-
-      <h3 id="sec-1-3">1.3 技選択画面</h3>
-      <ul>
-        <li><strong>画面名表示</strong>：「技選択画面」を常時表示。</li>
-        <li><strong>入力引き継ぎ</strong>：選んだ3体（ID/名称/属性/HP/STA/ATK/DEF/MAG/SPD/選択順）を表示。</li>
-        <li><strong>機能</strong>
-          <ul>
-            <li>上部にCPU候補6体を常時表示。</li>
-            <li>各出場モンスターに<strong>必ず4つの技</strong>をセット（未満は遷移不可）。</li>
-            <li>技は個別解除可能。解除後は再選択できる。</li>
-            <li>技リストに属性・威力・消費STを明示。</li>
-            <li>1体目→2体目→3体目の順に選択、完了で「バトルへ」。</li>
-            <li>未完了があれば該当モンスターへ自動フォーカス＆警告。</li>
-          </ul>
-        </li>
-        <li><strong>説明ウインドウ</strong>
-          <ul>
-            <li>「ちょうど4つ選んでください。選択済みはタップで解除できます。」</li>
-            <li>一致属性の技は威力2倍。偏りは不利に注意。</li>
-            <li>強い技はST消費大。安定技とのバランスを。</li>
-          </ul>
-        </li>
-        <li><strong>戻る</strong>：下部中央。モンスター選択に戻る。</li>
-      </ul>
-
-      <h3 id="sec-1-4">1.4 バトル画面</h3>
-      <ul>
-        <li><strong>画面名表示</strong>：「バトル画面」を常時表示。</li>
-        <li><strong>機能</strong>
-          <ul>
-            <li>各陣営1体ずつ場に出して対戦。</li>
-            <li>HP/スタミナ/STATS を表示。</li>
-            <li>選択コマンド：<strong>技（4）/ 交代 / 降参</strong></li>
-            <li>技ボタン：技名/威力/消費ST/属性。対面相性 〇/×、補正後威力（例：10→20）を表示。</li>
-            <li>ST不足の技は選択不可。「ガード」はST消費で次回被ダメ1回を半減。</li>
-            <li>バトルログに履歴を記録。</li>
-            <li>終了時：勝敗＋「感謝とコメント促しメッセージ」。</li>
-            <li>「リスタート」で開始画面へ。</li>
-          </ul>
-        </li>
-        <li><strong>説明ウインドウ</strong>
-          <ul>
-            <li>攻撃 or 交代で駆け引き。</li>
-            <li>属性エフェクトで双方の属性が可視化。</li>
-            <li>終了後は感謝メッセージを表示。</li>
-          </ul>
-        </li>
-        <li><strong>戻る</strong>：下部中央。技選択に戻る（バトルは破棄）。</li>
-      </ul>
+        </div>
+      </details>
     </section>
 
-    <!-- 2. データ仕様 -->
-    <section id="sec-2" class="card">
-      <h2>2. データ仕様</h2>
-
-      <h3 id="sec-2-1">2.1 モンスター</h3>
-      <ul>
-        <li>パラメータ：HP、スタミナ(ST)、攻撃力(ATK)、防御力(DEF)、魔力(MAG)、素早さ(SPD)。</li>
-        <li>属性：炎、水、風、土、雷、氷、光、闇。</li>
-        <li>識別情報：内部IDを付与し、画面間の引き継ぎに利用。</li>
-      </ul>
-
-      <h3 id="sec-2-2">2.2 技</h3>
-      <ul>
-        <li>項目：技名、タイプ（物理/魔法/補助）、威力、消費スタミナ、属性（任意）。</li>
-        <li>プレイヤーはプールから自由に4つを選択。</li>
-        <li>属性一致技は威力2倍。</li>
-      </ul>
-    </section>
-
-    <!-- 3. バトルルール -->
-    <section id="sec-3" class="card">
-      <h2>3. バトルルール（暫定）</h2>
-      <ul>
-        <li>ターン制コマンドバトル。</li>
-        <li>双方同時に行動選択。</li>
-        <li>行動順：SPD高い方→先攻。同値はランダム。</li>
-        <li>ダメージ計算式：</li>
-      </ul>
-      <pre><code>dmg = floor(base × STAB × 相性 × 乱数)
-base = floor(pow × (10+攻撃) / (10+防御))
-STAB = 2.0
-相性 = {1.5 / 1.0 / 0.5}
-乱数 ∈ [0.85, 1.00]</code></pre>
-      <ul>
-        <li>ST不足の技は不可。「ガード」はST消費で次の被ダメ1回のみ半減。</li>
-        <li>属性相性：
-          <ul>
-            <li>相性マトリクス（攻撃→防御）を掲示。</li>
-            <li>例：炎&gt;氷、水&gt;炎/土、風&gt;土、土&gt;雷、雷&gt;水、氷&gt;風、光↔闇。</li>
-            <li>係数は1.5/1.0/0.5。</li>
+    <!-- 1. 目的 -->
+    <section id="sec-1" class="sec">
+      <details class="req" open>
+        <summary>1. 目的</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>ブラウザで動作するゲームを試作し、実際にプレイヤーに遊んでもらう。</li>
+            <li>ゲームの訴求点や駆け引きの面白さを体験ベースで説明・検証する。</li>
+            <li>プレイヤーからフィードバックを集め、ゲームシステムをブラッシュアップする。</li>
           </ul>
-        </li>
-      </ul>
+        </div>
+      </details>
     </section>
 
-    <!-- 4. 攻撃演出要件 -->
-    <section id="sec-4" class="card">
-      <h2>4. 攻撃演出要件</h2>
-      <ul>
-        <li>攻撃側カードの発光/拡大。</li>
-        <li>属性弾（火の玉/稲妻/氷槍など）の飛翔。</li>
-        <li>ヒット時の属性専用演出（爆発、水しぶき、氷結）。</li>
-        <li>大ダメ時は相手カードにシェイク。</li>
-        <li>実装：
-          <ul>
-            <li>簡易版：CSSアニメ（クラス付替）。</li>
-            <li>発展版：Canvas/SVG/画像でリッチ化。</li>
+    <!-- 2. 画面構成と要件 -->
+    <section id="sec-2" class="sec">
+      <details class="req" open>
+        <summary>2. 画面構成と要件</summary>
+        <div class="box grid-2">
+          <div class="card">
+            <h3>2.1 開始画面</h3>
+            <ul class="list-tight">
+              <li>画面名表示：「開始画面」ヘッダーを画面上部に常時表示。</li>
+              <li>タイトル表示：ゲームタイトル「モンスター対戦（仮）」を中央に表示。</li>
+              <li>選択ボタン：「▶ モンスターを選ぶ」を押すとモンスター選択画面へ遷移。</li>
+              <li>説明ウインドウ：ゲーム概要や記事リンクを表示。読み専用。</li>
+              <li>戻るボタン：不要。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>2.2 モンスター選択画面</h3>
+            <ul class="list-tight">
+              <li>画面名表示：「モンスター選択画面」ヘッダーを画面上部に常時表示。</li>
+              <li>相手候補6体：表示専用。クリック操作不可。</li>
+              <li>プレイヤー選択：全モンスターから3体をクリックで選択/解除。</li>
+              <li>カウンター：選択数 (n/3) を表示。</li>
+              <li>技ボタン：「技を選ぶ」を押すと技選択画面へ遷移。3体選択後のみ有効化。</li>
+              <li>属性表：簡易マトリクス（〇/△/×表記、全属性一覧）を表示。読み専用。</li>
+              <li>ガイドボタン：「おすすめを見る」を押すとガイドメッセージを表示。</li>
+              <li>説明ウインドウ：画面の目的や戦略ヒントを表示。読み専用。</li>
+              <li>戻るボタン：開始画面に戻る。選択状態保持あり。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>2.3 技選択画面</h3>
+            <ul class="list-tight">
+              <li>画面名表示：「技選択画面」ヘッダーを画面上部に常時表示。</li>
+              <li>候補6体表示：相手候補を表示。読み専用。</li>
+              <li>プレイヤー3体：選んだ3体を表示。クリックで技セット切替。</li>
+              <li>技リスト：各技をクリックで選択。属性/威力/消費ST表示。</li>
+              <li>選択済みリスト：セット済み技を表示。クリックで解除可能。</li>
+              <li>必須条件：各モンスターに4つ技をセットしないと遷移不可。</li>
+              <li>自動遷移：未完了モンスターがある場合、自動で当該モンスターへ移動し警告を表示。</li>
+              <li>バトルへ：3体すべて技セット完了時のみ有効。クリックでバトル画面へ。</li>
+              <li>説明ウインドウ：技選択の注意を表示。「ちょうど4つ選んでください」ガイダンスを常時表示。</li>
+              <li>戻るボタン：モンスター選択画面へ戻る。状態保持あり。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>2.4 バトル画面</h3>
+            <ul class="list-tight">
+              <li>画面名表示：「バトル画面」ヘッダーを画面上部に常時表示。</li>
+              <li>ステータス表示：HP/STゲージと能力値を表示。</li>
+              <li>技ボタン：セットした4技をクリックで行動選択。ST不足は無効。</li>
+              <li>交代ボタン：他のモンスターに交代可能。</li>
+              <li>降参ボタン：クリックで即時敗北。確認なし。</li>
+              <li>技情報：技名・威力・消費ST・属性マークを表示。相性が良い場合「〇」、不利は「×」。補正後の威力も表示（例: 10→20）。</li>
+              <li>ログ：行動履歴を表示。読み専用。</li>
+              <li>リスタート：クリックで開始画面に戻る。初期化あり。</li>
+              <li>説明ウインドウ：バトル操作の説明を表示。</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- 3. データ仕様 -->
+    <section id="sec-3" class="sec">
+      <details class="req" open>
+        <summary>3. データ仕様</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>モンスター：HP、ST、ATK、DEF、MAG、SPD、属性（炎/水/風/土/雷/氷/光/闇）、内部ID。</li>
+            <li>技：技名、タイプ（物理/魔法/補助）、威力、消費ST、属性（任意）。属性一致で威力2倍。</li>
           </ul>
-        </li>
-        <li>過剰にせず読み合いの可視化を優先。</li>
-      </ul>
+        </div>
+      </details>
     </section>
 
-    <!-- 5. UI共通要件 -->
-    <section id="sec-5" class="card">
-      <h2>5. UI共通要件</h2>
-      <ul>
-        <li>説明ウインドウ：全画面下部に常時表示（戻るの直上）。</li>
-        <li>戻る：全画面共通で下部中央。</li>
-        <li>戻る時は選択状態を保持。</li>
-        <li>スマホ前提で十分なタップ領域。</li>
-        <li>画面名を上部に常時表示し現在地を明示。</li>
-        <li>状態引き継ぎ：選んだ3体・相手候補6体・技選択内容を後続画面へ確実に引き継ぐ。</li>
-      </ul>
+    <!-- 4. バトルルール -->
+    <section id="sec-4" class="sec">
+      <details class="req" open>
+        <summary>4. バトルルール</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>ターン制コマンドバトル。</li>
+            <li>行動順：SPD高い方が先攻。同値はランダム。</li>
+            <li>ダメージ計算式：dmg = floor(base × STAB × 相性 × 乱数)。</li>
+            <li>base = floor(pow × (10+攻撃)/(10+防御))。</li>
+            <li>STAB=2.0、相性=1.5/1.0/0.5、乱数=0.85〜1.00。</li>
+            <li>ST不足技は選択不可。「ガード」は次の被ダメージ半減。</li>
+            <li>相性例：炎>氷、水>炎/土、風>土、土>雷、雷>水、氷>風、光↔闇。</li>
+          </ul>
+        </div>
+      </details>
     </section>
 
-    <!-- 6. フィードバック要件 -->
-    <section id="sec-6" class="card">
-      <h2>6. フィードバック要件</h2>
-      <p>バトル終了時に以下の固定メッセージを表示：</p>
-      <pre><code>プレイしていただきありがとうございました！
-ぜひ感想や改善点のコメントをお願いします。
-このゲームをより面白くするためのご意見をお待ちしています。</code></pre>
-      <p>リスタート時に非表示へ戻す。</p>
+    <!-- 5. 攻撃演出 -->
+    <section id="sec-5" class="sec">
+      <details class="req" open>
+        <summary>5. 攻撃演出</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>攻撃時にカードが光る/拡大する。</li>
+            <li>属性ごとの飛び道具エフェクト。</li>
+            <li>ヒット時の専用演出（爆発、水しぶき等）。</li>
+            <li>大ダメージ時はシェイク演出。</li>
+            <li>実装：CSSアニメーション簡易版、将来はCanvas等リッチ演出。</li>
+          </ul>
+        </div>
+      </details>
     </section>
 
-    <!-- 7. 今後の検討事項 -->
-    <section id="sec-7" class="card">
-      <h2>7. 今後の検討事項（バックログ）</h2>
-
-      <h3>コアゲームルール</h3>
-      <ul>
-        <li>ダメージ計算式の最終確定。</li>
-        <li>SPD同値時の処理（ランダム／交互）。</li>
-        <li>ST不足時の挙動（不発／ターン消費／防御行動）。</li>
-        <li>交代ルール詳細、状態異常/バフデバフ、クリティカル/命中回避。</li>
-      </ul>
-
-      <h3>属性・相性</h3>
-      <ul>
-        <li>倍率最終値（現在：一致2.0/有利1.5/不利0.5）。</li>
-        <li>複合属性・無属性技の扱い。</li>
-      </ul>
-
-      <h3>技設計</h3>
-      <ul>
-        <li>ST効率と威力の調整、クールダウン/連発制限。</li>
-        <li>カウンター/防御/フェイントの精度。</li>
-      </ul>
-
-      <h3>コンピュータAI</h3>
-      <ul>
-        <li>ピックAI（6→3選出）。</li>
-        <li>技選択AI（相性・ST管理、期待与ダメ最大化）。</li>
-        <li>有利交代/ガード使用/不足時自動補填。</li>
-      </ul>
-
-      <h3>バトル演出</h3>
-      <ul>
-        <li>CSS簡易→Canvas/SVG/リッチへ拡張。</li>
-        <li>大ダメ演出、SE導入。</li>
-      </ul>
-
-      <h3>UI/UX</h3>
-      <ul>
-        <li>コマンドレイアウト最適化（横/縦/グリッド）。</li>
-        <li>技カード情報（属性バッジ、相性ヒント）。</li>
-        <li>降参の誤操作防止。</li>
-        <li>技選択で相性マトリクス＋おすすめ提示。</li>
-      </ul>
-
-      <h3>コンテンツ拡張</h3>
-      <ul>
-        <li>モンスター/技の追加方針。</li>
-        <li>天候・地形・禁止属性などのギミック。</li>
-        <li>2v2、ドラフト制など別フォーマット。</li>
-      </ul>
-
-      <h3>計測・改善</h3>
-      <ul>
-        <li>行動ログ（選出率、採用率、平均ターン数）。</li>
-        <li>離脱ポイント分析、コメント導線改善。</li>
-      </ul>
-
-      <h3>品質・技術</h3>
-      <ul>
-        <li>モバイル最適化、色覚/文字サイズ対応。</li>
-        <li>エラーハンドリング、自動/回帰テスト。</li>
-      </ul>
-
-      <h3>パブリッシング・SEO/広報</h3>
-      <ul>
-        <li>ブログ/Notion埋め込み最適化。</li>
-        <li>更新履歴の自動化、アンケート導線。</li>
-      </ul>
+    <!-- 6. UI共通要件 -->
+    <section id="sec-6" class="sec">
+      <details class="req" open>
+        <summary>6. UI共通要件</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>説明ウインドウ：全画面下部に常時表示。</li>
+            <li>戻るボタン：下部中央に配置。状態保持あり。</li>
+            <li>画面名：上部に常時表示。</li>
+            <li>スマホ最適化：誤タップ防止。</li>
+          </ul>
+        </div>
+      </details>
     </section>
 
-    <!-- 8. 変更履歴（新しい順） -->
-    <section id="sec-8" class="card">
-      <h2>8. 変更履歴</h2>
-      <ul>
-        <li>2025-09-26: 本ページに「9. ファイル構成」を追加（ゲーム関連ファイルに限定）。</li>
-        <li>2025-09-26: 技は各モンスター4つ必須、未満は遷移不可（警告/自動フォーカス）。</li>
-        <li>2025-09-26: ST不足で技不可、ガードはST消費で次回被ダメ半減。</li>
-        <li>2025-09-26: モンスター選択に属性相対表と「おすすめを見る」を追加。</li>
-        <li>2025-09-26: バトル技表示に相性〇/×と補正後威力（例: 10→20）を明示。</li>
-        <li>2025-09-26: 技選択にCPU候補6体の常時表示を追加。</li>
-        <li>2025-09-26: 全画面に「画面名」を常時表示する要件を追加。</li>
-        <li>2025-09-26: 初版要件定義を作成。以後、変更履歴を運用。</li>
-      </ul>
+    <!-- 7. フィードバック要件 -->
+    <section id="sec-7" class="sec">
+      <details class="req" open>
+        <summary>7. フィードバック要件</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>バトル終了時に感謝とコメント促しメッセージを表示。</li>
+            <li>リスタートで非表示。</li>
+          </ul>
+        </div>
+      </details>
     </section>
 
-    <!-- 9. ファイル構成（ゲーム関連のみ） -->
-    <section id="sec-9" class="card">
-      <h2>9. ファイル構成（ゲーム関連のみ）</h2>
-      <ul>
-        <li><code>/demo.html</code>：ゲームのエントリーポイント（開始→選択→技→バトルのUI）。</li>
-        <li><code>/assets/css/site.css</code>：共通スタイル（カードUI、レイアウト、タイポグラフィ）。</li>
-        <li><code>/assets/js/main.js</code>：画面遷移、状態保持、簡易演出、相性/威力補正の表示制御。</li>
-        <li><code>/assets/js/monster-data.js</code>：モンスター定義（ID/名称/属性/HP/STA/ATK/DEF/MAG/SPD）。</li>
-        <li><code>/assets/js/skill-data.js</code>：技定義（名称/タイプ/威力/消費ST/属性）。</li>
-      </ul>
-      <p class="note">※ 要件定義文書（本HTML）や運用系ファイルは含めず、<strong>ゲームに直接関わるファイルのみ</strong>を列挙しています。</p>
+    <!-- 8. ファイル構成 -->
+    <section id="sec-8" class="sec">
+      <details class="req" open>
+        <summary>8. ファイル構成</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>demo.html：ゲーム全体の画面遷移とUI構造を記述。</li>
+            <li>start.css：開始画面のスタイルを定義。</li>
+            <li>select.css：モンスター選択画面のスタイルを定義。</li>
+            <li>skill.css：技選択画面のスタイルを定義。</li>
+            <li>battle.css：バトル画面のスタイルを定義。</li>
+            <li>main.js：ゲーム全体のロジックを管理（画面遷移、データ処理）。</li>
+            <li>battle.js：バトル処理（ターン制、ダメージ計算、演出処理）。</li>
+            <li>monsters.js：モンスター定義データ（ステータス、属性）。</li>
+            <li>skills.js：技定義データ（威力、ST、属性）。</li>
+          </ul>
+        </div>
+      </details>
     </section>
 
-    <!-- 上部へ戻る -->
-    <p style="margin-top:1rem"><a class="link" href="#top">▲ ページ上部へ戻る</a></p>
+    <!-- 9. 画面オブジェクト一覧 -->
+    <section id="sec-9" class="sec">
+      <details class="req" open>
+        <summary>9. 画面オブジェクト一覧</summary>
+        <div class="box grid-2">
+          <div class="card">
+            <h3>開始画面</h3>
+            <ul class="list-tight">
+              <li>タイトル：読み専用。</li>
+              <li>モンスター選ぶボタン：クリックでモンスター選択画面へ。</li>
+              <li>説明ウインドウ：読み専用。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>モンスター選択画面</h3>
+            <ul class="list-tight">
+              <li>相手候補カード：読み専用。</li>
+              <li>プレイヤーカード：クリックで選択/解除。</li>
+              <li>カウンター：自動更新。</li>
+              <li>技を選ぶボタン：クリックで技選択画面へ。</li>
+              <li>属性表：読み専用。</li>
+              <li>おすすめボタン：クリックでガイド表示。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>技選択画面</h3>
+            <ul class="list-tight">
+              <li>候補表示：読み専用。</li>
+              <li>技リスト：クリックで技を選択。</li>
+              <li>選択済みリスト：クリックで解除。</li>
+              <li>バトルへボタン：クリックでバトル画面へ。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>バトル画面</h3>
+            <ul class="list-tight">
+              <li>ステータス表示：読み専用。</li>
+              <li>技ボタン：クリックで行動選択。</li>
+              <li>交代ボタン：クリックでモンスター交代。</li>
+              <li>降参ボタン：クリックで即終了。</li>
+              <li>ログ：読み専用。</li>
+              <li>リスタート：クリックで開始画面へ。</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- 10. 開発者ガイド -->
+    <section id="sec-10" class="sec">
+      <details class="req" open>
+        <summary>10. 開発者ガイド</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>HTMLはdemo.htmlに集約し、画面構成をsectionで分割する。</li>
+            <li>CSSは画面ごとに分割して管理し、可読性と保守性を高める。</li>
+            <li>JSは役割ごとに分割：main.jsはUI制御、battle.jsはバトルロジック。</li>
+            <li>データはmonsters.jsとskills.jsに分離し、拡張性を確保。</li>
+            <li>今後の変更時は変更履歴を追記し、上から新しい順に記録。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 11. 今後の検討事項 -->
+    <section id="sec-11" class="sec">
+      <details class="req" open>
+        <summary>11. 今後の検討事項</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>ダメージ式の最終確定、SPD同値処理。</li>
+            <li>状態異常やバフ/デバフ。</li>
+            <li>複合属性や無属性。</li>
+            <li>AIの精緻化（選出/技選択）。</li>
+            <li>演出強化（Canvas/効果音）。</li>
+            <li>UI改善（カード情報、降参誤操作防止）。</li>
+            <li>モンスターや技の拡張。</li>
+            <li>計測・改善ログ収集。</li>
+            <li>品質（モバイル性能、アクセシビリティ、テスト）。</li>
+            <li>SEO/公開、アンケート導入。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 12. 変更履歴 -->
+    <section id="sec-12" class="sec">
+      <details class="req" open>
+        <summary>12. 変更履歴</summary>
+        <div class="box">
+          <ul class="list-tight">
+            <li>2025-09-27: ファイル構成・各ファイル機能・画面オブジェクト一覧・開発者ガイドを追加。</li>
+            <li>2025-09-26: 技選択ガイダンス追加。</li>
+            <li>2025-09-26: CPU行動方針を追加。</li>
+            <li>2025-09-26: ST不足技選択不可、ガード仕様追加。</li>
+            <li>2025-09-26: ダメージ計算式を厳密定義。</li>
+            <li>2025-09-26: 技選択を順次遷移方式に変更。</li>
+            <li>2025-09-26: 技解除・再選択機能を追加。</li>
+            <li>2025-09-26: 技セット必須条件を追加。</li>
+            <li>2025-09-26: 「おすすめを見る」ボタンを追加。</li>
+            <li>2025-09-26: 属性相対表をモンスター選択画面に追加。</li>
+            <li>2025-09-26: バトル画面技表示に相性・補正威力を追加。</li>
+            <li>2025-09-26: 技選択画面に相手候補6体を表示。</li>
+            <li>2025-09-26: 各画面に「画面名」を常時表示。</li>
+            <li>2025-09-26: 初版要件定義を作成。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
   </main>
 
   <footer class="site-footer">
     <p>© <span id="year"></span> Monster Duel Project</p>
   </footer>
 
+  <!-- 上部へ戻る -->
+  <a class="btn btn--primary top-btn" href="#top" aria-label="トップへ戻る">▲</a>
+
   <script src="../assets/js/main.js" defer></script>
+  <script>
+    // ===== 目次の自動生成（H2=各大項目） =====
+    document.addEventListener('DOMContentLoaded', () => {
+      const toc = document.getElementById('toc');
+      const sections = Array.from(document.querySelectorAll('main section[id]'));
+      const frag = document.createDocumentFragment();
+      sections.forEach(sec => {
+        const h2 = sec.querySelector('summary') || sec.querySelector('h2');
+        if(!h2) return;
+        const a = document.createElement('a');
+        a.href = `#${sec.id}`;
+        a.textContent = h2.textContent.replace(/\s*#\s*$/, '');
+        frag.appendChild(a);
+      });
+      toc.appendChild(frag);
+    });
+  </script>
 </body>
 </html>
