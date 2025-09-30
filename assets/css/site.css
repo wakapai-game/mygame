@@ -86,3 +86,16 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,s
 /* Responsive */
 @media (max-width:1080px){.hero{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}}
 @media (max-width:680px){.section--grid .feature-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
+
+/* 行ハイライト（深リンク時） */
+.row-highlight {
+  outline: 2px solid var(--brand, #67d4ff);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand, #67d4ff) 35%, transparent);
+  transition: box-shadow .8s ease, outline-color .8s ease;
+}
+.row-anchor {
+  text-decoration: none;
+  color: inherit;
+  opacity: .85;
+}
+.row-anchor:hover { opacity: 1; text-decoration: underline; }
