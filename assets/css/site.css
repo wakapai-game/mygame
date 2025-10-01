@@ -99,3 +99,17 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,s
   opacity: .85;
 }
 .row-anchor:hover { opacity: 1; text-decoration: underline; }
+
+/* Trailer */
+.video-frame { position: relative; }
+.video {
+  width: 100%;
+  aspect-ratio: 16 / 9;     /* 高さが未確定でもレイアウトが崩れない */
+  background: #0b0f16;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.video-cta { margin-top: 12px; display: flex; gap: 8px; }
+.inline-link { text-decoration: underline; }
+

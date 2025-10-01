@@ -83,6 +83,44 @@
   <div id="monSpot" class="cards"></div>
 </section>
 
+<!-- ▼▼ 追加: トレーラー ▼▼ -->
+<section class="section" id="trailer">
+  <h2>トレーラー</h2>
+  <p class="sub">ゲームのテンポと“駆け引きの熱”をショート映像で。</p>
+
+  <figure class="video-frame">
+    <video
+      id="gameTrailer"
+      class="video"
+      controls
+      preload="metadata"
+      playsinline
+      webkit-playsinline
+      poster="./assets/media/trailer-poster.png"
+      title="モンスターデュエル：心理戦の芸術（トレーラー）"
+      aria-label="モンスターデュエル：心理戦の芸術（トレーラー）"
+    >
+      <!-- 日本語名のまま使う場合は src をURLエンコードしたものに -->
+      <source src="./assets/media/trailer.mp4" type="video/mp4" />
+      お使いのブラウザは動画再生に対応していません。
+      <a href="./assets/media/trailer.mp4" download>動画をダウンロード</a>
+    </video>
+
+    <figcaption class="muted" style="margin-top:.5rem">
+      音あり推奨。ミュートで自動再生する端末もあります（タップで解除）。
+      <a href="./assets/media/trailer.mp4" class="inline-link">ダウンロード</a>
+    </figcaption>
+  </figure>
+
+  <div class="video-cta">
+    <a class="btn btn--primary" href="./demo.html">▶ デモを遊ぶ</a>
+  </div>
+</section>
+<!-- ▲▲ ここまで追加 ▲▲ -->
+
+<!-- 末尾のスクリプト群の直前に追加読み込み（任意：自動再生＆レジューム） -->
+<script src="./assets/js/trailer.js" defer></script>
+
 
   <!-- World -->
   <section class="section" id="world">
