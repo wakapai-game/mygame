@@ -81,6 +81,19 @@
   .mat-good{color:#6ee7a3;font-weight:800}
   .mat-bad{color:#ff6b7a;font-weight:800}
   .mat-even{color:#d3d8ff}
+  /* モンスター詳細モーダル */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60}
+  .modal-overlay.active{display:flex}
+  .modal{background:var(--panel);border:1px solid #2a2f52;border-radius:12px;padding:12px;max-width:420px;width:92%;color:var(--ink)}
+  .modal .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+  .modal .stat{background:#0f1424;border:1px solid #24314a;padding:8px;border-radius:8px;text-align:center}
+  .modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  .selectBtn{position:absolute;right:8px;top:8px;background:var(--btn);border:1px solid #394078;color:var(--ink);padding:6px 8px;border-radius:8px;font-weight:800;cursor:pointer}
+  /* ホバーで表示されるステータス（カード内オーバーレイ） */
+  .monster .hoverStats{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(8,10,20,0.75);border:1px solid #2a2f52;padding:8px;border-radius:8px;display:none;z-index:5;color:var(--ink);}
+  .monster:hover .hoverStats, .monster.showStats .hoverStats{display:grid}
+  .monster .hoverStats{grid-template-columns:repeat(3,1fr);gap:6px;font-size:.85rem}
+  .monster .hoverStats .stat{background:#0f1424;border:1px solid #24314a;padding:6px;border-radius:6px;text-align:center}
 </style>
 </head>
 <body>
@@ -92,7 +105,7 @@
     <div class="panel">
       <h2>ようこそ！</h2>
       <p class="hint">このゲームは<strong>モンスターを選び、技をセットしてバトル</strong>するブラウザゲームです。短時間で駆け引きの面白さを味わえます。</p>
-      <div class="flow"><button class="cta big tap" id="goPick">▶ モンスターを選ぶ</button></div>
+  <div class="flow"><button class="cta big tap" id="goPick" disabled>▶ デモプレイ開始</button></div>
     </div>
     <div class="panel">
       <h3>ゲームのねらい</h3>
@@ -214,6 +227,30 @@
   <div id="dockBtns"><button id="backBtn" class="tap big">◀ 戻る</button></div>
 </div>
 
+<!-- モンスター詳細モーダル -->
+<div id="monsterModal" class="modal-overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="modalName">—</h3>
+    <div id="modalEl" class="hint">—</div>
+    <div class="stats" id="modalStats">
+      <!-- stat boxes inserted here -->
+    </div>
+    <div class="actions">
+      <button id="modalClose" class="btn">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showMonsterModal(m){ const mod = document.getElementById('monsterModal'); document.getElementById('modalName').textContent = m.name; document.getElementById('modalEl').textContent = EL_ICON[m.el]+' '+m.el; const stats = document.getElementById('modalStats'); stats.innerHTML=''; ['hp','st','atk','def','mag','spd'].forEach(k=>{ const d = document.createElement('div'); d.className='stat'; d.textContent = k.toUpperCase() + ': ' + (m[k] ?? '—'); stats.appendChild(d); }); mod.classList.add('active'); mod.setAttribute('aria-hidden','false'); }
+function hideMonsterModal(){ const mod = document.getElementById('monsterModal'); mod.classList.remove('active'); mod.setAttribute('aria-hidden','true'); }
+document.getElementById('modalClose').addEventListener('click', hideMonsterModal);
+document.getElementById('monsterModal').addEventListener('click', (e)=>{ if(e.target.id==='monsterModal') hideMonsterModal(); });
+</script>
+<!-- デモ用データ読み込み（図鑑用の render-*.js は pages/* が使用） -->
+<script src="assets/js/monsters.js" defer></script>
+<script src="assets/js/moves.js" defer></script>
+
 <script>
 /* ===== データ ===== */
 const ELEMENTS=['炎','水','風','土','雷','氷','光','闇'];
@@ -223,39 +260,16 @@ const TYPE_EFFECT={
   炎:{氷:1.5,水:0.5,土:0.5}, 水:{炎:1.5,土:1.5,雷:0.5}, 風:{土:1.5,氷:0.5},
   土:{雷:1.5,風:0.5,水:0.5}, 雷:{水:1.5,土:0.5}, 氷:{風:1.5,炎:0.5}, 光:{闇:1.5}, 闇:{光:1.5}
 };
-const MONSTERS=[
-  {id:'m01',name:'フレイムリン',el:'炎',hp:120,st:80,atk:18,def:10,mag:6,spd:12},
-  {id:'m02',name:'アクアリス',el:'水',hp:110,st:90,atk:12,def:12,mag:16,spd:11},
-  {id:'m03',name:'ゲイルバード',el:'風',hp:95,st:85,atk:14,def:10,mag:14,spd:18},
-  {id:'m04',name:'ロックホーン',el:'土',hp:140,st:70,atk:16,def:18,mag:4,spd:8},
-  {id:'m05',name:'サンダーキッド',el:'雷',hp:105,st:100,atk:15,def:10,mag:12,spd:16},
-  {id:'m06',name:'フロストフォックス',el:'氷',hp:100,st:95,atk:12,def:12,mag:18,spd:12},
-  {id:'m07',name:'ルクスキャット',el:'光',hp:115,st:85,atk:13,def:13,mag:13,spd:13},
-  {id:'m08',name:'ノクタス',el:'闇',hp:110,st:90,atk:17,def:9,mag:10,spd:14},
-  {id:'m09',name:'マグマタートル',el:'炎',hp:150,st:70,atk:16,def:20,mag:6,spd:6},
-  {id:'m10',name:'ミストレイ',el:'水',hp:100,st:110,atk:13,def:10,mag:19,spd:10},
-  {id:'m11',name:'シルフ',el:'風',hp:90,st:90,atk:12,def:9,mag:17,spd:20},
-  {id:'m12',name:'ゴーレム',el:'土',hp:160,st:65,atk:18,def:22,mag:2,spd:5}
-];
-const MOVES=[
-  {id:'p_fire',name:'フレイムクロー',type:'物理',pow:22,cost:15,el:'炎'},
-  {id:'p_water',name:'アクアスラッシュ',type:'物理',pow:20,cost:15,el:'水'},
-  {id:'p_wind',name:'エアカッター',type:'物理',pow:18,cost:14,el:'風'},
-  {id:'p_earth',name:'ロックスマッシュ',type:'物理',pow:22,cost:16,el:'土'},
-  {id:'p_thun',name:'サンダーストライク',type:'物理',pow:21,cost:16,el:'雷'},
-  {id:'p_ice',name:'フロストバイト',type:'物理',pow:19,cost:15,el:'氷'},
-  {id:'p_light',name:'ホーリーブレード',type:'物理',pow:21,cost:16,el:'光'},
-  {id:'p_dark',name:'シャドウスラッシュ',type:'物理',pow:21,cost:16,el:'闇'},
-  {id:'m_fire',name:'ファイアボール',type:'魔法',pow:24,cost:18,el:'炎'},
-  {id:'m_water',name:'ウォーターボール',type:'魔法',pow:24,cost:18,el:'水'},
-  {id:'m_wind',name:'ウィンドランス',type:'魔法',pow:22,cost:17,el:'風'},
-  {id:'m_earth',name:'ストーンランス',type:'魔法',pow:22,cost:18,el:'土'},
-  {id:'m_thun',name:'サンダーボルト',type:'魔法',pow:26,cost:20,el:'雷'},
-  {id:'m_ice',name:'アイスランス',type:'魔法',pow:24,cost:18,el:'氷'},
-  {id:'m_light',name:'レイ',type:'魔法',pow:25,cost:19,el:'光'},
-  {id:'m_dark',name:'ダークパルス',type:'魔法',pow:25,cost:19,el:'闇'},
-  {id:'s_guard',name:'ガード',type:'補助',pow:0,cost:10,el:null,note:'次の被ダメージ半減（1回）'}
-];
+// データは外部スクリプト（assets/js/monsters.js / assets/js/moves.js）で読み込まれます
+let MONSTERS = window.MONSTERS || [];
+let MOVES = window.MOVES || [];
+function _tryInitFromGlobals(){ if(window.MONSTERS) MONSTERS = window.MONSTERS; if(window.MOVES) MOVES = window.MOVES; if(MONSTERS.length && MOVES.length){ try{ // ボタンを有効化してデータ準備完了を知らせる
+        const go = document.getElementById('goPick'); if(go) go.disabled = false;
+      }catch(e){} } }
+window.addEventListener('monsters:loaded', ()=>{ MONSTERS = window.MONSTERS || []; _tryInitFromGlobals(); }, {once:true});
+window.addEventListener('moves:loaded', ()=>{ MOVES = window.MOVES || []; _tryInitFromGlobals(); }, {once:true});
+// 即時チェック（外部スクリプトが既に実行済みの場合）
+_tryInitFromGlobals();
 
 /* ===== 状態 ===== */
 const App={ screen:'start', cpuCandidates:[], cpuTeam:[], playerPick:[], playerLoadouts:{}, moveSetupIndex:0, battle:null };
@@ -291,13 +305,22 @@ function renderPickScreen(){
   $('#matrixWrap').innerHTML=buildMatrix();
 }
 function monsterCard(m,opt={}){
-  const card=el('div',{class:'monster '+(opt.mini?'mini':'' )+' el-'+m.el});
-  const name=el('div',{class:'head'}, el('div',{class:'name'},m.name), el('div',{class:'badge'},EL_ICON[m.el]+' '+m.el));
-  const stats=el('div',{class:'statlist'}, el('div',{},'HP '+m.hp), el('div',{},'ST '+m.st), el('div',{},'ATK '+m.atk), el('div',{},'DEF '+m.def), el('div',{},'MAG '+m.mag), el('div',{},'SPD '+m.spd));
-  card.append(name,stats);
+  const card=el('div',{class:'monster compact '+(opt.mini?'mini':'' )+' el-'+m.el, title:m.name});
+  const nameWrap = el('div',{class:'head'}, el('div',{class:'name'},m.name));
+  const badge = el('div',{class:'badge'}, EL_ICON[m.el]+' '+m.el);
+  nameWrap.append(badge);
+  // hover/tap で詳細ステータスを表示するオーバーレイ
+  const hoverStats = el('div',{class:'hoverStats'});
+  ['hp','st','atk','def','mag','spd'].forEach(k=>{ hoverStats.append(el('div',{class:'stat'}, (k.toUpperCase()) + ': ' + (m[k] ?? '—'))); });
+  card.append(nameWrap, hoverStats);
   if(opt.cpu){ card.classList.add('cpuPick'); }
-  if(opt.selected){ card.classList.add('selected'); card.append(el('div',{class:'selectMark'},'選出中')); }
-  if(opt.selectable){ card.style.cursor='pointer'; card.addEventListener('click',()=>{ const i=App.playerPick.indexOf(m.id); if(i>=0) App.playerPick.splice(i,1); else { if(App.playerPick.length>=3) return; App.playerPick.push(m.id);} renderPickScreen(); }); }
+  if(opt.selected){ card.classList.add('selected'); }
+  if(opt.selectable){ card.style.cursor='pointer'; card.addEventListener('click',()=>{ const i=App.playerPick.indexOf(m.id); if(i>=0) App.playerPick.splice(i,1); else { if(App.playerPick.length>=3) return; App.playerPick.push(m.id);} renderPickScreen(); });
+    // タッチデバイス向け: ヘッダーをタップするとステータス表示をトグル
+    nameWrap.addEventListener('click',(e)=>{ e.stopPropagation(); // toggle only the card
+      card.classList.toggle('showStats');
+    });
+  }
   return card;
 }
 $('#toMoveSetup').addEventListener('click',()=>{ if(!App.playerPick.length) return; App.moveSetupIndex=0; renderMoveSetup(); setScreen('moves'); });

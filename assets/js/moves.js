@@ -8,6 +8,7 @@
   async function load() {
     const res = await fetch("../data/moves.json", { cache: "no-store" });
     const moves = await res.json();
+    try{ window.MOVES = moves; window.dispatchEvent(new Event('moves:loaded')); }catch(e){}
 
     const headers = ["ID","名前","タイプ","属性","威力","消費ST","効果/備考"];
     table.innerHTML = `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody></tbody>`;

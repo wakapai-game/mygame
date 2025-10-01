@@ -2,17 +2,21 @@
 (() => {
   // ほぼ既存の render-monsters.js のロジックを移植
   const table = document.getElementById("monTable");
-  if (!table) return;
+    // テーブルが存在するページ（図鑑ページ）では描画する
+    if (!table) return; // もしテーブルが存在しない場合は終了
 
   const EL_ICON = { 炎:'🔥', 水:'💧', 風:'🌪️', 土:'⛰️', 雷:'⚡', 氷:'❄️', 光:'✨', 闇:'🌑' };
 
   async function load() {
     const res = await fetch("../data/monsters.json", { cache: "no-store" });
     const mons = await res.json();
+    // 公開（デモでも利用するためグローバルに設定）
+    try{ window.MONSTERS = mons; window.dispatchEvent(new Event('monsters:loaded')); }catch(e){}
 
-    const headers = ["ID","名前","属性","HP","ST","ATK","DEF","MAG","SPD"];
-    table.innerHTML = `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody></tbody>`;
-    const tbody = table.querySelector("tbody");
+      if (table) {
+        const headers = ["ID","名前","属性","HP","ST","ATK","DEF","MAG","SPD"];
+        table.innerHTML = `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody></tbody>`;
+        const tbody = table.querySelector("tbody");
 
     mons.forEach(m => {
       const tr = document.createElement("tr");
