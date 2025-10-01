@@ -1,7 +1,7 @@
 [
-  { "id":"v001","name":"フレアショット","attr":"炎","power":60,"cost":20,"category":"特殊","note":"確率でやけど" },
-  { "id":"v002","name":"アクアジェット","attr":"水","power":40,"cost":10,"category":"物理","note":"先制" },
-  { "id":"v003","name":"ウィンドカッター","attr":"風","power":55,"cost":15,"category":"特殊","note":"" },
-  { "id":"v004","name":"ロックスマッシュ","attr":"土","power":65,"cost":18,"category":"物理","note":"防御↓" },
-  { "id":"v005","name":"サンダーボルト","attr":"雷","power":90,"cost":28,"category":"特殊","note":"まひ"}
+  { "id": "v001", "name": "フレアショット", "type": "魔法", "el": "炎", "pow": 60, "cost": 20, "note": "確率でやけど" },
+  { "id": "v002", "name": "アクアジェット", "type": "物理", "el": "水", "pow": 40, "cost": 10, "note": "先制" },
+  { "id": "v003", "name": "ウィンドカッター", "type": "魔法", "el": "風", "pow": 55, "cost": 15, "note": "" },
+  { "id": "v004", "name": "ロックスマッシュ", "type": "物理", "el": "土", "pow": 65, "cost": 18, "note": "防御↓" },
+  { "id": "v005", "name": "サンダーボルト", "type": "魔法", "el": "雷", "pow": 90, "cost": 28, "note": "まひ" }
 ]
