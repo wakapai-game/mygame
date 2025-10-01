@@ -40,19 +40,28 @@
   .bars{display:grid;gap:6px;margin-top:6px}
   .bar{height:12px;background:#12162a;border:1px solid #2a2f52;border-radius:999px;overflow:hidden}
   .bar .fill{height:100%}
+  .bar {position:relative}
+  .barNum{position:absolute;right:8px;top:-18px;font-size:.82rem;color:var(--muted);font-weight:700}
   .hp{background:linear-gradient(90deg,#28d07b,#5ce388)}
   .st{background:linear-gradient(90deg,#2db7ff,#67d4ff)}
   .cmds{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
   .cmds .mv{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left}
-  .mv .meta{display:flex;gap:6px;flex-wrap:wrap;font-size:.9rem;color:#cbd2ff}
+  .cmds .mv{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px}
+  .mv > div:first-child{font-weight:800}
+  .mv .meta{display:flex;gap:8px;align-items:center;font-size:.9rem;color:#cbd2ff}
+  .badge.cost{background:#22314a;border:1px solid #394078;padding:4px 8px;border-radius:8px;font-weight:700}
   .mv .meta .eff{font-weight:900}
   .mv .meta .eff.good{color:var(--good)}
   .mv .meta .eff.bad{color:var(--bad)}
   .swapList{display:flex;gap:8px;flex-wrap:wrap}
   .mini{min-width:120px}
   #battleLog{background:#0e1326;border:1px solid #2a2f52;border-radius:12px;padding:10px;height:180px;overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.35}
+  #battleLog .logEntry{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.02);margin-bottom:6px;color:#dfe6ff}
+  #battleLog .logEntry .muted{color:var(--muted);font-size:.85rem;margin-left:8px}
   .youGlow{animation:youGlow .35s ease}
   .foeGlow{animation:foeGlow .35s ease}
+  .st-zero{animation:stBlink .8s linear infinite}
+  @keyframes stBlink{0%{box-shadow:0 0 0 0 rgba(255,107,122,0)}50%{box-shadow:0 0 0 6px rgba(255,107,122,.22)}100%{box-shadow:0 0 0 0 rgba(255,107,122,0)}}
   @keyframes youGlow{from{box-shadow:0 0 0 0 rgba(103,212,255,.0)}to{box-shadow:0 0 0 6px rgba(103,212,255,.2)}}
   @keyframes foeGlow{from{box-shadow:0 0 0 0 rgba(255,107,122,.0)}to{box-shadow:0 0 0 6px rgba(255,107,122,.2)}}
   .shake{animation:shake .25s linear 2}
@@ -160,7 +169,6 @@
             </div>
             <div class="bars">
               <div class="bar"><div id="foeHP" class="fill hp" style="width:100%"></div></div>
-              <div class="bar"><div id="foeST" class="fill st" style="width:100%"></div></div>
             </div>
           </div>
         </div>
@@ -347,37 +355,123 @@ function autoPickMoves(mon){ const same=MOVES.filter(m=>m.el===mon.el); const ph
 /* ===== バトル ===== */
 function startBattle(){ App.battle={ you:App.playerPick.map(id=>mkFighter(byId(MONSTERS,id),App.playerLoadouts[id]||[])), foe:App.cpuTeam.map(id=>mkFighter(byId(MONSTERS,id),App.cpuLoadouts[id]||[])), iact:0,jact:0, over:false,turn:1,log:[]}; renderBattle(); logLine('バトル開始！ あなたは '+App.battle.you.map(f=>f.name).join(' / ')+'、あいては3体を選出しています。'); }
 function mkFighter(m,moveIds){ return {...m,curHP:m.hp,curST:m.st,guard:false,alive:true,moves:moveIds.map(id=>byId(MOVES,id))}; }
-function renderBattle(){ const B=App.battle; const Y=B.you[B.iact], F=B.foe[B.jact]; $('#youName').textContent=Y.name; $('#youEl').textContent=EL_ICON[Y.el]+' '+Y.el; $('#foeName').textContent=F.name; $('#foeEl').textContent=EL_ICON[F.el]+' '+F.el; setBar('#youHP',Y.curHP/Y.hp); setBar('#youST',Y.curST/Y.st); setBar('#foeHP',F.curHP/F.hp); setBar('#foeST',F.curST/F.st); const cmd=$('#cmdArea'); cmd.innerHTML=''; Y.moves.forEach(mv=>{ const info=computePreview(Y,F,mv); const b=el('button',{class:'mv tap btn el-'+(mv.el||'光')}); const effMark= info.eff>1.0? el('span',{class:'eff good'},'〇'): info.eff<1.0? el('span',{class:'eff bad'},'×'): el('span',{class:'eff'},''); b.append(el('div',{},mv.name), el('div',{class:'meta'}, el('span',{class:'badge'}, `${mv.el?EL_ICON[mv.el]+' '+mv.el:'—'} / ${mv.type}`), el('span',{class:'pow'}, `威力 ${mv.pow}${info.mult>1?('→'+info.viewPow):''}`), el('span',{class:'cost'}, `ST-${mv.cost}`), effMark)); b.disabled=(mv.type!=='補助'&&Y.curST<mv.cost)||!Y.alive; b.addEventListener('click',()=>issueTurn({kind:'move',move:mv})); cmd.append(b); }); const sp=$('#swapArea'); sp.innerHTML=''; App.battle.you.forEach((f,i)=>{ if(!f.alive||i===App.battle.iact) return; const b=el('button',{class:'btn mini tap'}, `${f.name}（${EL_ICON[f.el]}）`); b.addEventListener('click',()=>issueTurn({kind:'swap',to:i})); sp.append(b); }); $('#openSwap').onclick=()=>{}; $('#giveUp').onclick=()=>issueTurn({kind:'giveup'}); $('#battleLog').innerHTML=App.battle.log.map(l=>'• '+l).join('\n'); $('#battleLog').scrollTop=99999; }
+function renderBattle(){ const B=App.battle; const Y=B.you[B.iact], F=B.foe[B.jact]; $('#youName').textContent=Y.name; $('#youEl').textContent=EL_ICON[Y.el]+' '+Y.el; $('#foeName').textContent=F.name; $('#foeEl').textContent=EL_ICON[F.el]+' '+F.el; setBar('#youHP',Y.curHP/Y.hp); setBar('#youST',Y.curST/Y.st); setBar('#foeHP',F.curHP/F.hp); // foe ST is kept internal per requirements: hide or de-emphasize
+  // ST=0 blink effect on front monsters
+  const youCard = $('.you'); const foeCard = $('.foe'); if(Y.curST<=0){ youCard.classList.add('st-zero'); } else { youCard.classList.remove('st-zero'); } if(F.curST<=0){ foeCard.classList.add('st-zero'); } else { foeCard.classList.remove('st-zero'); }
+  // numeric labels for bars (attach or update)
+  try{
+    const youHPBar = $('#youHP').parentElement; const youSTBar = $('#youST').parentElement; const foeHPBar = $('#foeHP').parentElement;
+    const ensure=(parent,txt)=>{ let n=parent.querySelector('.barNum'); if(!n){ n=document.createElement('div'); n.className='barNum'; parent.appendChild(n); } n.textContent=txt; };
+    ensure(youHPBar, `${Y.curHP}/${Y.hp}`); ensure(youSTBar, `${Y.curST}/${Y.st}`); ensure(foeHPBar, `${F.curHP}/${F.hp}`);
+  }catch(e){}
+  const cmd=$('#cmdArea'); cmd.innerHTML=''; Y.moves.forEach(mv=>{
+    const info=computePreview(Y,F,mv);
+    const b=el('button',{class:'mv tap btn el-'+(mv.el||'光')});
+    const effMark= info.eff>1.0? el('span',{class:'eff good'},'〇'): info.eff<1.0? el('span',{class:'eff bad'},'×'): el('span',{class:'eff'},'');
+    // ST drain preview on target (per-hit * hits)
+    const totalTargetStDrain = (info.hits||1) * (info.stPerHit||0);
+    const metaParts = [ el('span',{class:'badge'}, `${mv.el?EL_ICON[mv.el]+' '+mv.el:'—'}`), el('span',{class:'pow'}, `威力 ${mv.pow}${info.mult>1?('→'+info.viewPow):''}`), el('span',{class:'badge cost'}, `ST-${mv.cost}`) ];
+    if(totalTargetStDrain>0) metaParts.push(el('span',{class:'badge cost'}, `相手ST-${totalTargetStDrain}`));
+    b.append(el('div',{},mv.name), el('div',{class:'meta'}, ...metaParts, effMark));
+    b.disabled = !Y.alive;
+    if(mv.type!=='補助' && Y.curST < mv.cost){ b.title = `現在ST不足（必要 ${mv.cost}）。使用時に残りSTを消費し、不足分は自身のHPで補填します。`; }
+    else { b.title = totalTargetStDrain>0 ? `ヒット毎に相手ST-${info.stPerHit || 0}（合計 ${totalTargetStDrain}）` : ''; }
+    b.addEventListener('click',()=>issueTurn({kind:'move',move:mv}));
+    cmd.append(b);
+  });
+  const sp=$('#swapArea'); sp.innerHTML=''; App.battle.you.forEach((f,i)=>{ if(!f.alive||i===App.battle.iact) return; const b=el('button',{class:'btn mini tap'}, `${f.name}（${EL_ICON[f.el]}）`); b.addEventListener('click',()=>issueTurn({kind:'swap',to:i})); sp.append(b); }); $('#openSwap').onclick=()=>{}; $('#giveUp').onclick=()=>issueTurn({kind:'giveup'}); $('#battleLog').innerHTML=App.battle.log.map(l=>'• '+l).join('<br>'); $('#battleLog').scrollTop=99999; }
 function setBar(sel,ratio){ const n=$(sel); const pct=Math.max(0,Math.min(100,Math.round(ratio*100))); n.style.width=pct+'%'; }
-function computePreview(att,def,mv){ if(mv.type==='補助') return {eff:1,mult:1,viewPow:0}; const stab= mv.el&&mv.el===att.el?2.0:1.0; const eff= mv.el?(TYPE_EFFECT[mv.el]?.[def.el]??1.0):1.0; const mult=stab*eff; const viewPow=Math.floor(mv.pow*mult); return {eff,mult,viewPow}; }
-function issueTurn(your){ if(App.battle.over) return; const B=App.battle; const Y=B.you[B.iact], F=B.foe[B.jact]; const actYou=your; const actFoe=decideAI(F,Y); const order=decideOrder(Y,F); const acts= order==='you-first'?[{who:'you',act:actYou},{who:'foe',act:actFoe}]:[{who:'foe',act:actFoe},{who:'you',act:actYou}]; for(const step of acts){ if(App.battle.over) break; const res=resolveAction(step.who,step.act); if(res==='end') break; } App.battle.turn++; renderBattle(); checkEnd(); }
-function decideOrder(Y,F){ if(Y.spd>F.spd) return 'you-first'; if(F.spd>Y.spd) return 'foe-first'; return Math.random()<.5?'you-first':'foe-first'; }
-function resolveAction(who,action){ const B=App.battle; const me=(who==='you')?B.you[B.iact]:B.foe[B.jact]; const op=(who==='you')?B.foe[B.jact]:B.you[B.iact]; const meCard=(who==='you')?$('.you'):$('.foe'); const opCard=(who==='you')?$('.foe'):$('.you'); if(!me.alive) return; if(action.kind==='giveup'){ logLine((who==='you'?'あなた':'あいて')+'は降参した！'); endBattle(who==='you'?'lose':'win'); return 'end'; } if(action.kind==='swap'){ if(action.to!=null){ if(who==='you') B.iact=action.to; else B.jact=action.to; const cur=(who==='you')?B.you[B.iact]:B.foe[B.jact]; logLine((who==='you'?'あなた':'あいて')+'は '+cur.name+' に交代した！'); me.guard=false; (who==='you'?meCard:opCard).classList.add(who==='you'?'youGlow':'foeGlow'); setTimeout(()=> (who==='you'?meCard:opCard).classList.remove(who==='you'?'youGlow':'foeGlow'),350);} return; }
-  if(action.kind==='move'){
-    const mv=action.move; if(mv.type==='補助'){ if(me.curST<mv.cost){ logLine('ST不足で「'+mv.name+'」は使えない…'); return; } me.curST-=mv.cost; me.guard=true; logLine((who==='you'?'あなた':'あいて')+'は『'+mv.name+'』で身を守っている！'); (who==='you'?meCard:opCard).classList.add('youGlow'); setTimeout(()=> (who==='you'?meCard:opCard).classList.remove('youGlow'),350); return; }
-    if(me.curST<mv.cost){ logLine('ST不足で「'+mv.name+'」は使えない…'); return; }
-    me.curST-=mv.cost; const dmg=calcDamage(me,op,mv);
-    animateAttack((who==='you')?$('#youSide'):$('#foeSide'), (who==='you')?$('#foeSide'):$('#youSide'), mv.el||'光', ()=>{
-      let dealt=dmg; if(op.guard){ dealt=Math.floor(dealt*0.5); op.guard=false; }
-      op.curHP=Math.max(0, op.curHP-dealt);
-      const pv=computePreview(me,op,mv); const effTxt=pv.eff>1.0?'（こうかはばつぐん！）':(pv.eff<1.0?'（いまひとつ…）':'');
-      logLine((who==='you'?'あなた':'あいて')+'の『'+mv.name+'』！ 威力'+mv.pow+(pv.mult>1?('→'+pv.viewPow):'')+' '+effTxt);
-      const big = dealt >= Math.max(20, Math.round(op.hp*0.25)); const opCardEl=(who==='you')?$('.foe'):$('.you'); if(big){ opCardEl.classList.add('shake'); setTimeout(()=>opCardEl.classList.remove('shake'),500); }
-      if(op.curHP<=0){ op.alive=false; logLine((who==='you'?'あいて':'あなた')+'の '+op.name+' は たおれた…'); autoSwapIfPossible(who==='you'?'foe':'you'); }
-      renderBattle();
-    });
+function computePreview(att,def,mv){ if(mv.type==='補助') return {eff:1,mult:1,viewPow:0,hits:mv.hits||1,stPerHit:0}; const stab= mv.el&&mv.el===att.el?2.0:1.0; const eff= mv.el?(TYPE_EFFECT[mv.el]?.[def.el]??1.0):1.0; const mult=stab*eff; const viewPow=Math.floor(mv.pow*mult); const hits = mv.hits || 1; const stPerHit = (eff>1?20:10); return {eff,mult,viewPow,hits,stPerHit}; }
+async function issueTurn(your){
+  if(App.battle.over) return;
+  const B=App.battle;
+  const Y=B.you[B.iact], F=B.foe[B.jact];
+  const actYou=your; const actFoe=decideAI(F,Y);
+  const order=decideOrder(Y,F);
+  const acts = order==='you-first' ? [{who:'you',act:actYou},{who:'foe',act:actFoe}] : [{who:'foe',act:actFoe},{who:'you',act:actYou}];
+
+  // Process actions sequentially, awaiting animations/processing so logs match visual order
+  for(const step of acts){
+    if(App.battle.over) break;
+    const res = await resolveAction(step.who, step.act);
+    if(res==='end') break;
+    // update UI between actions so HP/ST bars reflect results before next action
+    renderBattle();
   }
+
+  // End-of-turn: Back monsters regenerate ST (1% of max ST, min 1)
+  const regen = (m)=>{ const amount = Math.max(1, Math.floor(m.st * 0.01)); m.curST = Math.min(m.st, (m.curST||0) + amount); };
+  B.you.forEach((f,i)=>{ if(!f.alive) return; if(i!==B.iact){ regen(f); } });
+  B.foe.forEach((f,i)=>{ if(!f.alive) return; if(i!==B.jact){ regen(f); } });
+  App.battle.turn++; renderBattle(); checkEnd();
+}
+function decideOrder(Y,F){ if(Y.spd>F.spd) return 'you-first'; if(F.spd>Y.spd) return 'foe-first'; return Math.random()<.5?'you-first':'foe-first'; }
+function resolveAction(who,action){
+  return new Promise((resolve)=>{
+    const B=App.battle;
+    const me=(who==='you')?B.you[B.iact]:B.foe[B.jact];
+    const op=(who==='you')?B.foe[B.jact]:B.you[B.iact];
+    const meCard=(who==='you')?$('.you'):$('.foe');
+    const opCard=(who==='you')?$('.foe'):$('.you');
+    if(!me.alive){ resolve(); return; }
+    if(action.kind==='giveup'){ logLine((who==='you'?'あなた':'あいて')+'は降参した！'); endBattle(who==='you'?'lose':'win'); resolve('end'); return; }
+    if(action.kind==='swap'){ if(action.to!=null){ if(who==='you') B.iact=action.to; else B.jact=action.to; const cur=(who==='you')?B.you[B.iact]:B.foe[B.jact]; logLine((who==='you'?'あなた':'あいて')+'は '+cur.name+' に交代した！'); me.guard=false; (who==='you'?meCard:opCard).classList.add(who==='you'?'youGlow':'foeGlow'); setTimeout(()=> (who==='you'?meCard:opCard).classList.remove(who==='you'?'youGlow':'foeGlow'),350); } resolve(); return; }
+    if(action.kind==='move'){
+      const mv=action.move;
+      if(mv.type==='補助'){
+        if(me.curST < mv.cost){ const deficit = mv.cost - me.curST; me.curST = 0; me.curHP = Math.max(0, me.curHP - deficit); logLine((who==='you'?'あなた':'あいて')+`はST不足だが『${mv.name}』を使用（不足分 ${deficit} をHPで補填）`); }
+        else { me.curST -= mv.cost; }
+        me.guard=true; logLine((who==='you'?'あなた':'あいて')+'は『'+mv.name+'』で身を守っている！'); (who==='you'?meCard:opCard).classList.add('youGlow'); setTimeout(()=> (who==='you'?meCard:opCard).classList.remove('youGlow'),350); resolve(); return;
+      }
+      if(me.curST < mv.cost){ const deficit = mv.cost - me.curST; me.curST = 0; me.curHP = Math.max(0, me.curHP - deficit); logLine((who==='you'?'あなた':'あいて')+`はST不足だが『${mv.name}』を使用（不足分 ${deficit} をHPで補填）`); }
+      else { me.curST -= mv.cost; }
+      const hits = mv.hits || 1;
+      animateAttack((who==='you')?$('#youSide'):$('#foeSide'), (who==='you')?$('#foeSide'):$('#youSide'), mv.el||'光', ()=>{
+        (async ()=>{
+          for(let h=1; h<=hits; h++){
+            const eff = mv.el?(TYPE_EFFECT[mv.el]?.[op.el]??1.0):1.0;
+            const stDrain = 10 * (eff>1?2:1);
+            if(op.curST >= stDrain){ op.curST = Math.max(0, op.curST - stDrain); }
+            else { const deficit = stDrain - op.curST; op.curST = 0; op.curHP = Math.max(0, op.curHP - deficit); }
+            let dealt = calcDamage(me,op,mv);
+            if(op.guard){ dealt = Math.floor(dealt*0.5); op.guard=false; }
+            op.curHP = Math.max(0, op.curHP - dealt);
+            const pv=computePreview(me,op,mv); const effTxt=pv.eff>1.0?'（こうかはばつぐん！）':(pv.eff<1.0?'（いまひとつ…）':'');
+            logLine((who==='you'?'あなた':'あいて')+`の『${mv.name}』！（ヒット ${h}/${hits}） 威力${mv.pow}${pv.mult>1?('→'+pv.viewPow):''} ${effTxt}`);
+            const big = dealt >= Math.max(20, Math.round(op.hp*0.25)); const opCardEl=(who==='you')?$('.foe'):$('.you'); if(big){ opCardEl.classList.add('shake'); setTimeout(()=>opCardEl.classList.remove('shake'),500); }
+            if(op.curHP<=0){ op.alive=false; logLine((who==='you'?'あいて':'あなた')+'の '+op.name+' は たおれた…'); autoSwapIfPossible(who==='you'?'foe':'you'); break; }
+            renderBattle();
+            await new Promise(r=>setTimeout(r, 180));
+          }
+          resolve();
+        })();
+      });
+    }
+  });
 }
 function calcDamage(att,def,mv){ const atk = mv.type==='物理'?att.atk:att.mag; const base=Math.max(1,Math.floor(mv.pow*(10+atk)/(10+def.def))); const stab= mv.el&&mv.el===att.el?2.0:1.0; const eff= mv.el?(TYPE_EFFECT[mv.el]?.[def.el]??1.0):1.0; const rand=0.85+Math.random()*0.15; const dmg=Math.floor(base*stab*eff*rand); return Math.max(1,dmg); }
 function autoSwapIfPossible(side){ const B=App.battle; if(side==='you'){ const idx=B.you.findIndex((f,i)=>f.alive&&i!==B.iact); if(idx>=0){ B.iact=idx; logLine('あなたは '+B.you[idx].name+' をくりだした！'); } else endBattle('lose'); } else { const idx=B.foe.findIndex((f,i)=>f.alive&&i!==B.jact); if(idx>=0){ B.jact=idx; logLine('あいては '+B.foe[idx].name+' をくりだした！'); } else endBattle('win'); } }
-function decideAI(me,op){ const usable=me.moves.filter(m=> m.type==='補助' || me.curST>=m.cost); let best=null,bestScore=-1; for(const mv of usable){ if(mv.type==='補助'){ const need=(me.curST<mv.cost+12)||(typeEff(mv.el,op.el)<1&&op.curHP>op.hp*0.6); const sc=need?5:0; if(sc>bestScore){ bestScore=sc; best={kind:'move',move:mv}; } } else { const preview=computePreview(me,op,mv); const atk = mv.type==='物理'?me.atk:me.mag; const score = preview.viewPow*(10+atk)/(10+op.def); if(score>bestScore){ bestScore=score; best={kind:'move',move:mv}; } } } if(!best){ const cand=App.battle.foe.map((f,i)=>({f,i})).filter(x=>x.f.alive&&x.i!==App.battle.jact); const good=cand.find(x=> typeEff(null,op.el,x.f.el)>1.0 ); if(good) return {kind:'swap',to:good.i}; return {kind:'move',move:me.moves[0]}; } return best; }
+function decideAI(me,op){ // AI may use moves even if ST不足（不足分は自身のHPで補填される）、ただし自殺ラインの判定は回避する
+  const usable = me.moves.slice(); let best=null,bestScore=-1;
+  for(const mv of usable){ if(mv.type==='補助'){ const need=(me.curST<mv.cost+12)||(typeEff(mv.el,op.el)<1&&op.curHP>op.hp*0.6); const sc=need?5:0; if(sc>bestScore){ bestScore=sc; best={kind:'move',move:mv}; } } else {
+      const preview=computePreview(me,op,mv); const atk = mv.type==='物理'?me.atk:me.mag;
+      // If using this move would require more ST than current and the deficit >= curHP, deprioritize (would KO self)
+      const deficit = Math.max(0, mv.cost - me.curST);
+      const killSelfPenalty = deficit >= me.curHP ? 0.01 : 1.0;
+      const score = preview.viewPow*(10+atk)/(10+op.def) * killSelfPenalty;
+      if(score>bestScore){ bestScore=score; best={kind:'move',move:mv}; }
+    } }
+  if(!best){ const cand=App.battle.foe.map((f,i)=>({f,i})).filter(x=>x.f.alive&&x.i!==App.battle.jact); const good=cand.find(x=> typeEff(null,op.el,x.f.el)>1.0 ); if(good) return {kind:'swap',to:good.i}; return {kind:'move',move:me.moves[0]}; } return best; }
 function typeEff(attEl,defEl,overrideAttEl){ const el=overrideAttEl||attEl; return el?(TYPE_EFFECT[el]?.[defEl]??1.0):1.0; }
 function checkEnd(){ if(App.battle?.over) return; const youDead=App.battle.you.every(f=>!f.alive); const foeDead=App.battle.foe.every(f=>!f.alive); if(youDead||foeDead){ endBattle(foeDead?'win':'lose'); } }
 function endBattle(result){ App.battle.over=true; $('#battleResult').style.display='block'; $('#resultText').textContent=(result==='win'?'勝利！':'敗北…'); }
 $('#restart').addEventListener('click',()=>{ App.cpuCandidates=[]; App.cpuTeam=[]; App.playerPick=[]; App.playerLoadouts={}; App.battle=null; $('#battleResult').style.display='none'; renderPickScreen(); setScreen('start'); });
 
 /* ===== 演出・ユーティリティ ===== */
-function logLine(t){ App.battle.log.push(t); $('#battleLog').innerHTML=App.battle.log.map(l=>'• '+l).join('\n'); $('#battleLog').scrollTop=99999; }
+function logLine(t){ App.battle.log.push(t); const wrap = $('#battleLog'); wrap.innerHTML = App.battle.log.map(l=> `<div class="logEntry">• ${escapeHtml(l)}</div>`).join(''); wrap.scrollTop = wrap.scrollHeight; }
+
+// simple escape to avoid accidental HTML injection in logs
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" })[c]); }
 function animateAttack(fromSide,toSide,elName,onHit){ const c=$('#fxCanvas'); const rFrom=fromSide.querySelector('.card').getBoundingClientRect(); const rTo=toSide.querySelector('.card').getBoundingClientRect(); const rCan=c.getBoundingClientRect(); const start={x:(rFrom.right - rCan.left)-40,y:(rFrom.top + rFrom.height*0.35 - rCan.top)}; const end={x:(rTo.left - rCan.left)+40,y:(rTo.top + rTo.height*0.35 - rCan.top)}; runProjectile(c,start,end,EL_COLOR[elName]||'#67d4ff',onHit); }
 function runProjectile(canvas,start,end,color,onHit){ const ctx=canvas.getContext('2d'); let t=0,T=320; const sx=start.x,sy=start.y,ex=end.x,ey=end.y; const raf=()=>{ t+=16; ctx.clearRect(0,0,canvas.width,canvas.height); const p=Math.min(1,t/T); const x=sx+(ex-sx)*p; const y=sy+(ey-sy)*p + Math.sin(p*Math.PI)*-12; ctx.globalAlpha=.3; ctx.fillStyle=color; for(let i=0;i<6;i++){ const tt=Math.max(0,p - i*0.04); const xx=sx+(ex-sx)*tt; const yy=sy + (ey-sy)*tt + Math.sin(tt*Math.PI)*-12; ctx.beginPath(); ctx.arc(xx,yy,3-i*0.35,0,Math.PI*2); ctx.fill(); } ctx.globalAlpha=1; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fillStyle=color; ctx.fill(); if(p<1){ requestAnimationFrame(raf);} else { burst(canvas,end,color,onHit);} }; requestAnimationFrame(raf); }
 function burst(canvas,pos,color,onDone){ const ctx=canvas.getContext('2d'); let t=0,T=220; const parts=Array.from({length:14}).map(()=>({x:pos.x,y:pos.y,vx:(Math.random()*2-1)*2.2,vy:(Math.random()*2-1)*2.2,r:2+Math.random()*2})); const raf=()=>{ t+=16; const p=Math.min(1,t/T); ctx.clearRect(0,0,canvas.width,canvas.height); for(const pt of parts){ pt.x+=pt.vx; pt.y+=pt.vy; pt.vy+=.03; ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r*(1-p), 0, Math.PI*2); ctx.fillStyle=color; ctx.globalAlpha=1-p; ctx.fill(); } if(p<1){ requestAnimationFrame(raf);} else { ctx.clearRect(0,0,canvas.width, canvas.height); onDone&&onDone(); } }; requestAnimationFrame(raf); }
