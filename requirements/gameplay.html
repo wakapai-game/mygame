@@ -82,12 +82,13 @@
         <summary>0. ゲームタイトル</summary>
         <div class="box">
           <ul class="list-tight">
-            <li>本ゲームのタイトルは「モンスター対戦（仮）」とする。</li>
+            <li>デモプレイに最低限必要なファイル（自己完結で動作する最小セット）
+              <ul>
+                <li><strong>demo.html</strong>：デモプレイ画面（開始 → モンスター選択 → 技選択 → バトル）。この単一ファイルだけでデモの主要フローが動作します。</li>
+                <li><strong>（オプション）assets/css/site.css</strong>：サイト共通スタイル。ページ統一が必要な場合に使用しますが、デモ本体は内部スタイルで動作します。</li>
+              </ul>
+            </li>
           </ul>
-        </div>
-      </details>
-    </section>
-
     <!-- 1. 目的 -->
     <section id="sec-1" class="sec">
       <details class="req" open>
@@ -298,9 +299,9 @@
                     <li>js/
                       <ul>
                         <li><strong>main.js</strong>：画面遷移・共通UI制御・データロード。</li>
-                        <li><strong>mon-spotlight.js</strong>：モンスター表示・スポットライト処理。</li>
-                        <li><strong>render-monsters.js</strong>：モンスターカード描画ロジック。</li>
-                        <li><strong>render-moves.js</strong>：技リスト描画ロジック。</li>
+                <li><strong>mon-spotlight.js</strong>：モンスター表示・スポットライト処理。</li>
+                <li><strong>monsters.js</strong>：モンスター一覧描画ロジック（pages/monsters.html 用）。</li>
+                <li><strong>moves.js</strong>：技リスト描画ロジック（pages/moves.html 用）。</li>
                         <li><strong>trailer.js</strong>：紹介用トレーラーの制御。</li>
                         <li><strong>type-chart.js</strong>：属性相性表のロジック。</li>
                       </ul>
@@ -413,12 +414,12 @@
       <details class="req" open>
         <summary>10. 開発者ガイド</summary>
         <div class="box">
-          <ul class="list-tight">
+            <ul class="list-tight">
             <li>HTMLはdemo.htmlに集約し、画面構成をsectionで分割する。</li>
-            <li>CSSは画面ごとに分割して管理し、可読性と保守性を高める。</li>
-            <li>JSは役割ごとに分割：main.jsはUI制御、battle.jsはバトルロジック。</li>
-            <li>データはmonsters.jsとskills.jsに分離し、拡張性を確保。</li>
-            <li>今後の変更時は変更履歴を追記し、上から新しい順に記録。</li>
+            <li>CSSは画面ごとに分割して管理し、可読性と保守性を高める（例: `assets/css/monsters.css`）。</li>
+            <li>JSは役割ごとに分割：`main.js` は UI 制御、`battle.js` はバトルロジック、`monsters.js` / `moves.js` は各一覧描画を担う。</li>
+            <li>データは `data/monsters.json` と `data/moves.json` に分離されており、フロント側の描画ロジック（`assets/js/monsters.js` / `assets/js/moves.js`）で扱う。</li>
+            <li>今後の変更時は変更履歴を追記し、上から新しい順に記録する。</li>
           </ul>
         </div>
       </details>

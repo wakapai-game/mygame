@@ -67,8 +67,8 @@ mygame/
 - **roadmap.html** : 今後の開発計画。  
 
 ### pages/
-- **monsters.html** : モンスター図鑑をJSONから生成して表示。  
-- **moves.html** : 技一覧をJSONから生成して表示。  
+- **monsters.html** : モンスター図鑑をJSONから生成して表示（`assets/js/monsters.js`, `assets/css/monsters.css` を使用）。  
+- **moves.html** : 技一覧をJSONから生成して表示（`assets/js/moves.js`, `assets/css/moves.css` を使用）。  
 - **type-chart.html** : 属性相性表を描画。  
 
 ### data/
@@ -79,6 +79,9 @@ mygame/
 
 ### assets/
 - **css/site.css** : 共通デザイン定義。  
+- **css/monsters.css** : モンスター一覧固有の追加スタイル。  
+- **css/moves.css** : 技一覧固有の追加スタイル。  
+- **css/battle.css** : バトル画面用のスタブスタイル。  
 - **js/main.js** : 共通スクリプト。  
 - **js/render-***.js** : 各データをHTMLに描画する専用スクリプト。  
 - **images/** : アイコンや背景などの素材。  
@@ -102,7 +105,7 @@ mygame/
 静的ファイルのみ。VSCode Live Server などでOK。
 
 ## データ差し替え
-`data/monsters.json`, `moves.json`, `types.json` を編集すると自動で反映。カラムを増やす場合は `assets/js/render-*.js` を調整。
+`data/monsters.json`, `moves.json`, `types.json` を編集すると自動で反映。カラムを増やす場合は `assets/js/monsters.js` / `assets/js/moves.js` を調整。
 
 ## ライセンス
 © Monster Duel Project

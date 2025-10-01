@@ -139,6 +139,8 @@
   <section id="screen-moves" class="screen">
     <div class="panel">
       <div id="cpuBar" class="hint" style="margin-bottom:8px"></div>
+      <!-- 相手候補カード表示（技選択画面でも候補6体を確認できる） -->
+      <div id="cpuCandidatesMoves" class="grid" style="margin-bottom:8px"></div>
       <div id="moveSetupArea"></div>
     </div>
   </section>
@@ -293,7 +295,7 @@ function monsterCard(m,opt={}){
   const name=el('div',{class:'head'}, el('div',{class:'name'},m.name), el('div',{class:'badge'},EL_ICON[m.el]+' '+m.el));
   const stats=el('div',{class:'statlist'}, el('div',{},'HP '+m.hp), el('div',{},'ST '+m.st), el('div',{},'ATK '+m.atk), el('div',{},'DEF '+m.def), el('div',{},'MAG '+m.mag), el('div',{},'SPD '+m.spd));
   card.append(name,stats);
-  if(opt.cpu){ card.classList.add('cpuPick'); card.append(el('div',{class:'selectMark'},'候補')); }
+  if(opt.cpu){ card.classList.add('cpuPick'); }
   if(opt.selected){ card.classList.add('selected'); card.append(el('div',{class:'selectMark'},'選出中')); }
   if(opt.selectable){ card.style.cursor='pointer'; card.addEventListener('click',()=>{ const i=App.playerPick.indexOf(m.id); if(i>=0) App.playerPick.splice(i,1); else { if(App.playerPick.length>=3) return; App.playerPick.push(m.id);} renderPickScreen(); }); }
   return card;
@@ -306,6 +308,8 @@ function buildAdvice(){ if(!App.cpuCandidates.length) return '候補が未生成
 /* ===== 技選択 ===== */
 function renderMoveSetup(){
   $('#cpuBar').innerHTML='相手の候補： '+App.cpuCandidates.map(id=>{ const m=byId(MONSTERS,id); return `<span class="badge">${EL_ICON[m.el]} ${m.name}</span>`; }).join(' ');
+  // Moves 画面でも候補6体をカードで表示
+  const cpuMovesWrap = $('#cpuCandidatesMoves'); if(cpuMovesWrap){ cpuMovesWrap.innerHTML = ''; App.cpuCandidates.forEach(id=>{ const m = byId(MONSTERS,id); cpuMovesWrap.append(monsterCard(m,{cpu:true})); }); }
   const wrap=$('#moveSetupArea'); wrap.innerHTML='';
   const idx=App.moveSetupIndex; const mId=App.playerPick[idx]; const mon=byId(MONSTERS,mId); let sel=App.playerLoadouts[mId]; if(!sel){ App.playerLoadouts[mId]=[]; sel=App.playerLoadouts[mId]; }
   const root=el('div',{});

@@ -1,0 +1,3 @@
+/* pages/monsters.html 用の追加スタイル（site.css を継承） */
+.table#monTable td{vertical-align:middle}
+.card .muted{color:var(--muted)}
