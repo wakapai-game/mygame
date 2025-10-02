@@ -1,0 +1,36 @@
+/* Styles for the battle screen */
+#player-status, #enemy-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.monster-status {
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+}
+.monster-status.front {
+  border-color: #3b82f6;
+  background: #dbeafe;
+}
+.hp, .st {
+  height: 6px;
+  border-radius: 4px;
+  background: #e5e7eb;
+  margin-bottom: 4px;
+  flex-grow: 1;
+  position: relative;
+}
+.hp > div {
+  height: 100%;
+  background: #f87171; /* red */
+}
+.st > div {
+  height: 100%;
+  background: #60a5fa; /* blue */
+}
+#skill-buttons button {
+  margin-right: 6px;
+  margin-bottom: 6px;
+}

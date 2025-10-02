@@ -1,512 +1,94 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>コマンドバトル×モンスター（v3）</title>
-<style>
-  :root{--bg:#0f1220;--panel:#181c2f;--ink:#e9ecff;--muted:#aab0d6;--accent:#67d4ff;--good:#6ee7a3;--bad:#ff6b7a;--warn:#ffd36e;--btn:#232744;--card:#1e2440}
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP",Helvetica,Arial; background:linear-gradient(180deg,#0b0e1a,#0f1220 20%,#0f1220 100%); color:var(--ink)}
-  #app{max-width:960px;margin:0 auto;padding:8px 8px 96px;position:relative}
-  header#screenTitle{position:sticky;top:0;z-index:10;background:rgba(15,18,32,.8);backdrop-filter:blur(8px);border-bottom:1px solid #2a2f52;padding:12px 8px;text-align:center;font-weight:700}
-  .screen{display:none}.screen.active{display:block}
-  .row{display:flex;gap:12px;flex-wrap:wrap}
-  .col{flex:1 1 240px;min-width:240px}
-  .panel{background:var(--panel);border:1px solid #2a2f52;border-radius:12px;padding:12px}
-  .hint{color:var(--muted);font-size:.92rem}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-  button,.btn{background:var(--btn);color:var(--ink);border:1px solid #32375d;border-radius:12px;padding:12px 14px;font-size:1rem;font-weight:600;letter-spacing:.03em;cursor:pointer;width:100%;transition:.15s transform,.15s background;touch-action:manipulation}
-  button:hover{transform:translateY(-1px)}
-  button:disabled{opacity:.5;filter:saturate(.6);cursor:not-allowed}
-  .cta{background:linear-gradient(180deg,#2d6bff,#5bb9ff);border:none;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.2)}
-  .danger{background:#4b1730;border-color:#7a1f45}
-  .alt{background:#203a32;border-color:#2f6b57}
-  .monster{background:var(--card);border:1px solid #2a2f52;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
-  .monster .head{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .monster .name{font-weight:800}
-  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;font-weight:700;font-size:.9rem;background:#232744;border:1px solid #394078}
-  .statlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:.9rem;color:#d3d8ff}
-  .statlist div{background:#1a1f3a;border:1px solid #2a2f52;border-radius:8px;padding:6px 8px;text-align:center}
-  .selectMark{position:absolute;right:8px;bottom:8px;background:#16233a;border:1px solid #345b97;color:#9ad0ff;padding:4px 8px;border-radius:8px;font-size:.85rem;font-weight:800}
-  .selected{outline:2px solid var(--accent);box-shadow:0 0 0 3px rgba(103,212,255,.25) inset}
-  .cpuPick{opacity:.9;border-style:dashed}
-  #battleWrap{display:grid;grid-template-rows:auto auto 1fr auto;gap:10px}
-  .arena{position:relative;background:#11162a;border:1px solid #2a2f52;border-radius:14px;padding:10px;min-height:220px;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
-  .side{position:relative;padding:8px}
-  .card{background:var(--card);border:1px solid #354075;border-radius:14px;padding:10px;min-height:130px;position:relative;overflow:hidden;transition:.15s transform,.2s box-shadow}
-  .card .who{font-size:.95rem;color:var(--muted);margin-bottom:6px}
-  .bars{display:grid;gap:6px;margin-top:6px}
-  .bar{height:12px;background:#12162a;border:1px solid #2a2f52;border-radius:999px;overflow:hidden}
-  .bar .fill{height:100%}
-  .bar {position:relative}
-  .barNum{position:absolute;right:8px;top:-18px;font-size:.82rem;color:var(--muted);font-weight:700}
-  .hp{background:linear-gradient(90deg,#28d07b,#5ce388)}
-  .st{background:linear-gradient(90deg,#2db7ff,#67d4ff)}
-  .cmds{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-  .cmds .mv{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left}
-  .cmds .mv{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:10px}
-  .mv > div:first-child{font-weight:800}
-  .mv .meta{display:flex;gap:8px;align-items:center;font-size:.9rem;color:#cbd2ff}
-  .badge.cost{background:#22314a;border:1px solid #394078;padding:4px 8px;border-radius:8px;font-weight:700}
-  .mv .meta .eff{font-weight:900}
-  .mv .meta .eff.good{color:var(--good)}
-  .mv .meta .eff.bad{color:var(--bad)}
-  .swapList{display:flex;gap:8px;flex-wrap:wrap}
-  .mini{min-width:120px}
-  #battleLog{background:#0e1326;border:1px solid #2a2f52;border-radius:12px;padding:10px;height:180px;overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.35}
-  #battleLog .logEntry{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.02);margin-bottom:6px;color:#dfe6ff}
-  #battleLog .logEntry .muted{color:var(--muted);font-size:.85rem;margin-left:8px}
-  .youGlow{animation:youGlow .35s ease}
-  .foeGlow{animation:foeGlow .35s ease}
-  .st-zero{animation:stBlink .8s linear infinite}
-  @keyframes stBlink{0%{box-shadow:0 0 0 0 rgba(255,107,122,0)}50%{box-shadow:0 0 0 6px rgba(255,107,122,.22)}100%{box-shadow:0 0 0 0 rgba(255,107,122,0)}}
-  @keyframes youGlow{from{box-shadow:0 0 0 0 rgba(103,212,255,.0)}to{box-shadow:0 0 0 6px rgba(103,212,255,.2)}}
-  @keyframes foeGlow{from{box-shadow:0 0 0 0 rgba(255,107,122,.0)}to{box-shadow:0 0 0 6px rgba(255,107,122,.2)}}
-  .shake{animation:shake .25s linear 2}
-  @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-3px)}50%{transform:translateX(3px)}75%{transform:translateX(-3px)}100%{transform:translateX(0)}}
-  #bottomDock{position:fixed;left:0;right:0;bottom:0;z-index:15;padding:8px 8px calc(env(safe-area-inset-bottom) + 8px);background:linear-gradient(180deg,transparent,rgba(8,10,20,.7) 12%,rgba(8,10,20,.95))}
-  #explain{max-width:960px;margin:0 auto;background:var(--panel);border:1px solid #2a2f52;border-radius:14px;padding:12px;color:#dfe3ff;font-size:.98rem}
-  #dockBtns{max-width:960px;margin:8px auto 0;display:flex;justify-content:center}
-  #backBtn{min-width:200px}
-  .tap{min-height:48px}.big{min-height:56px;font-size:1.05rem}
-  .el-炎{--el:#ff6b6b}.el-水{--el:#5bb9ff}.el-風{--el:#7dd3fc}.el-土{--el:#c1a374}.el-雷{--el:#ffd36e}.el-氷{--el:#9ad0ff}.el-光{--el:#f5e08a}.el-闇{--el:#b28cff}
-  .flow{display:flex;gap:8px;flex-wrap:wrap}.flow>*{flex:1}
-  .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
-  .center{text-align:center}
-  table.matrix{width:100%;border-collapse:collapse;font-size:.92rem}
-  .matrix th,.matrix td{border:1px solid #2a2f52;padding:6px 8px;text-align:center}
-  .matrix th{background:#1a1f3a}
-  .mat-good{color:#6ee7a3;font-weight:800}
-  .mat-bad{color:#ff6b7a;font-weight:800}
-  .mat-even{color:#d3d8ff}
-  /* モンスター詳細モーダル */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60}
-  .modal-overlay.active{display:flex}
-  .modal{background:var(--panel);border:1px solid #2a2f52;border-radius:12px;padding:12px;max-width:420px;width:92%;color:var(--ink)}
-  .modal .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
-  .modal .stat{background:#0f1424;border:1px solid #24314a;padding:8px;border-radius:8px;text-align:center}
-  .modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
-  .selectBtn{position:absolute;right:8px;top:8px;background:var(--btn);border:1px solid #394078;color:var(--ink);padding:6px 8px;border-radius:8px;font-weight:800;cursor:pointer}
-  /* ホバーで表示されるステータス（カード内オーバーレイ） */
-  .monster .hoverStats{position:absolute;left:8px;right:8px;bottom:8px;background:rgba(8,10,20,0.75);border:1px solid #2a2f52;padding:8px;border-radius:8px;display:none;z-index:5;color:var(--ink);}
-  .monster:hover .hoverStats, .monster.showStats .hoverStats{display:grid}
-  .monster .hoverStats{grid-template-columns:repeat(3,1fr);gap:6px;font-size:.85rem}
-  .monster .hoverStats .stat{background:#0f1424;border:1px solid #24314a;padding:6px;border-radius:6px;text-align:center}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>モンスター対戦（仮） デモ</title>
+  <!-- Base styles reset -->
+  <style>
+    body { margin: 0; font-family: -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif; background: #f8fafc; color: #111; }
+    .screen { display: none; padding: 20px; }
+    .screen.active { display: block; }
+    h1 { font-size: 1.8rem; margin: 0 0 16px; }
+    button { margin: 6px 4px; padding: 8px 12px; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc; background: #e5e7eb; cursor: pointer; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .mon-list, .move-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .mon-card { border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; background: #fff; min-width: 120px; flex: 1 0 calc(33% - 12px); cursor: pointer; }
+    .mon-card.selected { background: #bfdbfe; }
+    .move-card { border: 1px solid #d1d5db; border-radius: 6px; padding: 4px; background: #fff; min-width: 120px; cursor: pointer; }
+    .move-card.selected { background: #fde68a; }
+    .status-bar { display: flex; gap: 6px; margin: 4px 0; }
+    .status { font-size: 0.8rem; }
+    #battle-log { height: 180px; overflow-y: auto; border: 1px solid #d1d5db; padding: 6px; margin-top: 10px; background: #fff; border-radius: 6px; }
+    #battle-log p { margin: 2px 0; font-size: 0.85rem; }
+  </style>
+  <link rel="stylesheet" href="css/start.css">
+  <link rel="stylesheet" href="css/select.css">
+  <link rel="stylesheet" href="css/skill.css">
+  <link rel="stylesheet" href="css/battle.css">
 </head>
 <body>
-<div id="app">
-  <header id="screenTitle">開始画面</header>
-
-  <!-- Start -->
-  <section id="screen-start" class="screen active">
-    <div class="panel">
-      <h2>ようこそ！</h2>
-      <p class="hint">このゲームは<strong>モンスターを選び、技をセットしてバトル</strong>するブラウザゲームです。短時間で駆け引きの面白さを味わえます。</p>
-  <div class="flow"><button class="cta big tap" id="goPick" disabled>▶ デモプレイ開始</button></div>
-    </div>
-    <div class="panel">
-      <h3>ゲームのねらい</h3>
-      <p class="hint">育成（技セット）で<strong>クリエイティブさ</strong>、対戦で<strong>読み合い</strong>を楽しめるテンポを意識しています。</p>
-    </div>
+  <!-- Start Screen -->
+  <section id="start-screen" class="screen active">
+    <h1>モンスター対戦（仮）</h1>
+    <p>ブラウザで遊べるモンスターバトルの試作版です。</p>
+    <button id="btn-start">▶ モンスターを選ぶ</button>
   </section>
-
-  <!-- Pick -->
-  <section id="screen-pick" class="screen">
-    <div class="panel">
-      <div class="row">
-        <div class="col">
-          <h3>相手の候補（ランダム6体）</h3>
-          <div id="cpuCandidates" class="grid"></div>
-          <div class="flow" style="margin-top:8px"><button id="btnAdvice" class="alt tap">おすすめを見る</button></div>
-          <div id="adviceBox" class="hint" style="margin-top:6px"></div>
-        </div>
-        <div class="col">
-          <h3>あなたの選出（<span id="pickCount">0</span>/3）</h3>
-          <div class="hint">全モンスターから<strong>3体</strong>選んでください。戻っても選択は保持されます。</div>
-          <div id="playerPicks" class="grid"></div>
-          <div class="flow" style="margin-top:8px"><button id="toMoveSetup" class="cta big tap" disabled>技を選ぶへ</button></div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div class="panel">
-          <h3>全モンスター</h3>
-          <div id="allMonsters" class="grid"></div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="panel">
-          <h3>属性相性マトリクス（攻撃側→防御側）</h3>
-          <div id="matrixWrap"></div>
-          <div class="hint">凡例：<span class="mat-good">〇 ×1.5</span> ／ <span class="mat-even">△ ×1.0</span> ／ <span class="mat-bad">× ×0.5</span></div>
-        </div>
-      </div>
-    </div>
+  <!-- Monster Selection Screen -->
+  <section id="select-screen" class="screen">
+    <h1>モンスター選択画面</h1>
+    <h2>相手候補（6体）</h2>
+    <div id="enemy-candidates" class="mon-list"></div>
+    <h2>自軍モンスターを選んでください（最大3体）</h2>
+    <div id="player-list" class="mon-list"></div>
+    <p>選択中: <span id="selected-count">0/3</span></p>
+    <button id="btn-to-skill" disabled>技を選ぶ</button>
+    <button id="btn-recommend">おすすめを見る</button>
+    <button id="btn-back-start">戻る</button>
+    <h3>属性相性表</h3>
+    <div id="type-chart"></div>
+    <div id="select-desc">相手の弱点を考えて自軍を選びましょう。</div>
   </section>
-
-  <!-- Moves -->
-  <section id="screen-moves" class="screen">
-    <div class="panel">
-      <div id="cpuBar" class="hint" style="margin-bottom:8px"></div>
-      <!-- 相手候補カード表示（技選択画面でも候補6体を確認できる） -->
-      <div id="cpuCandidatesMoves" class="grid" style="margin-bottom:8px"></div>
-      <div id="moveSetupArea"></div>
-    </div>
+  <!-- Skill Selection Screen -->
+  <section id="skill-screen" class="screen">
+    <h1>技選択画面</h1>
+    <h2>相手候補</h2>
+    <div id="skill-enemy" class="mon-list"></div>
+    <h2>自軍（各4技セット必須）</h2>
+    <div id="skill-tabs"></div>
+    <div id="skill-panel"></div>
+    <p>技はちょうど4つ選んでください。選択済みをクリックすると解除できます。</p>
+    <button id="btn-to-battle" disabled>バトルへ</button>
+    <button id="btn-back-select">戻る</button>
   </section>
-
-  <!-- Battle -->
-  <section id="screen-battle" class="screen">
-    <div id="battleWrap">
-      <div class="arena">
-        <div class="side" id="youSide">
-          <div class="card you">
-            <div class="who">あなた</div>
-            <div class="head row" style="align-items:center">
-              <div class="badge" id="youName">—</div>
-              <div class="badge" id="youEl">—</div>
-            </div>
-            <div class="bars">
-              <div class="bar"><div id="youHP" class="fill hp" style="width:100%"></div></div>
-              <div class="bar"><div id="youST" class="fill st" style="width:100%"></div></div>
-            </div>
-          </div>
-        </div>
-        <div class="side" id="foeSide">
-          <div class="card foe">
-            <div class="who">あいて</div>
-            <div class="head row" style="align-items:center">
-              <div class="badge" id="foeName">—</div>
-              <div class="badge" id="foeEl">—</div>
-            </div>
-            <div class="bars">
-              <div class="bar"><div id="foeHP" class="fill hp" style="width:100%"></div></div>
-            </div>
-          </div>
-        </div>
-        <canvas id="fxCanvas" width="10" height="10" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;"></canvas>
-      </div>
-
-      <div class="panel">
-        <div class="row">
-          <div class="col">
-            <h3>コマンド</h3>
-            <div id="cmdArea" class="cmds"></div>
-            <div class="flow" style="margin-top:8px">
-              <button id="openSwap" class="alt tap">モンスター交代</button>
-              <button id="giveUp" class="danger tap">降参</button>
-            </div>
-          </div>
-          <div class="col">
-            <h3>交代候補</h3>
-            <div id="swapArea" class="swapList"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="battleLog" class="mono panel"></div>
-
-      <div id="battleResult" class="panel" style="display:none">
-        <h3 id="resultText" class="center">—</h3>
-        <div class="panel"><div class="center" style="white-space:pre-line">
-プレイしていただきありがとうございました！
-ぜひ感想や改善点のコメントをお願いします。
-このゲームをより面白くするためのご意見をお待ちしています。
-        </div></div>
-        <div class="flow" style="margin-top:8px"><button id="restart" class="cta big tap">リスタート</button></div>
-      </div>
+  <!-- Battle Screen -->
+  <section id="battle-screen" class="screen">
+    <h1>バトル画面</h1>
+    <div id="battle-info">
+      <h2>味方</h2>
+      <div id="player-status"></div>
+      <h2>相手</h2>
+      <div id="enemy-status"></div>
     </div>
+    <div id="battle-commands">
+      <h3>コマンド</h3>
+      <div id="skill-buttons"></div>
+      <button id="btn-guard">ガード</button>
+      <button id="btn-swap">交代</button>
+      <button id="btn-surrender">降参</button>
+    </div>
+    <div id="battle-log"></div>
+    <button id="btn-restart">リスタート</button>
   </section>
-</div>
-
-<div id="bottomDock">
-  <div id="explain">このゲームはモンスターを選び、技をセットしてバトルするブラウザゲームです。</div>
-  <div id="dockBtns"><button id="backBtn" class="tap big">◀ 戻る</button></div>
-</div>
-
-<!-- モンスター詳細モーダル -->
-<div id="monsterModal" class="modal-overlay" aria-hidden="true">
-  <div class="modal" role="dialog" aria-modal="true">
-    <h3 id="modalName">—</h3>
-    <div id="modalEl" class="hint">—</div>
-    <div class="stats" id="modalStats">
-      <!-- stat boxes inserted here -->
-    </div>
-    <div class="actions">
-      <button id="modalClose" class="btn">閉じる</button>
-    </div>
-  </div>
-</div>
-
-<script>
-function showMonsterModal(m){ const mod = document.getElementById('monsterModal'); document.getElementById('modalName').textContent = m.name; document.getElementById('modalEl').textContent = EL_ICON[m.el]+' '+m.el; const stats = document.getElementById('modalStats'); stats.innerHTML=''; ['hp','st','atk','def','mag','spd'].forEach(k=>{ const d = document.createElement('div'); d.className='stat'; d.textContent = k.toUpperCase() + ': ' + (m[k] ?? '—'); stats.appendChild(d); }); mod.classList.add('active'); mod.setAttribute('aria-hidden','false'); }
-function hideMonsterModal(){ const mod = document.getElementById('monsterModal'); mod.classList.remove('active'); mod.setAttribute('aria-hidden','true'); }
-document.getElementById('modalClose').addEventListener('click', hideMonsterModal);
-document.getElementById('monsterModal').addEventListener('click', (e)=>{ if(e.target.id==='monsterModal') hideMonsterModal(); });
-</script>
-<!-- デモ用データ読み込み（図鑑用の render-*.js は pages/* が使用） -->
-<script src="assets/js/monsters.js" defer></script>
-<script src="assets/js/moves.js" defer></script>
-
-<script>
-/* ===== データ ===== */
-const ELEMENTS=['炎','水','風','土','雷','氷','光','闇'];
-const EL_ICON={炎:'🔥',水:'💧',風:'🌪️',土:'⛰️',雷:'⚡',氷:'❄️',光:'✨',闇:'🌑'};
-const EL_COLOR={炎:'#ff6b6b',水:'#5bb9ff',風:'#7dd3fc',土:'#c1a374',雷:'#ffd36e',氷:'#9ad0ff',光:'#f5e08a',闇:'#b28cff'};
-const TYPE_EFFECT={
-  炎:{氷:1.5,水:0.5,土:0.5}, 水:{炎:1.5,土:1.5,雷:0.5}, 風:{土:1.5,氷:0.5},
-  土:{雷:1.5,風:0.5,水:0.5}, 雷:{水:1.5,土:0.5}, 氷:{風:1.5,炎:0.5}, 光:{闇:1.5}, 闇:{光:1.5}
-};
-// データは外部スクリプト（assets/js/monsters.js / assets/js/moves.js）で読み込まれます
-let MONSTERS = window.MONSTERS || [];
-let MOVES = window.MOVES || [];
-function _tryInitFromGlobals(){ if(window.MONSTERS) MONSTERS = window.MONSTERS; if(window.MOVES) MOVES = window.MOVES; if(MONSTERS.length && MOVES.length){ try{ // ボタンを有効化してデータ準備完了を知らせる
-        const go = document.getElementById('goPick'); if(go) go.disabled = false;
-      }catch(e){} } }
-window.addEventListener('monsters:loaded', ()=>{ MONSTERS = window.MONSTERS || []; _tryInitFromGlobals(); }, {once:true});
-window.addEventListener('moves:loaded', ()=>{ MOVES = window.MOVES || []; _tryInitFromGlobals(); }, {once:true});
-// 即時チェック（外部スクリプトが既に実行済みの場合）
-_tryInitFromGlobals();
-
-/* ===== 状態 ===== */
-const App={ screen:'start', cpuCandidates:[], cpuTeam:[], playerPick:[], playerLoadouts:{}, moveSetupIndex:0, battle:null };
-
-/* ===== DOMヘルパ ===== */
-const $=sel=>document.querySelector(sel);
-const el=(tag,attrs={},...kids)=>{ const n=document.createElement(tag); for(const [k,v] of Object.entries(attrs)){ if(k==='class') n.className=v; else if(k==='style') n.setAttribute('style',v); else if(k.startsWith('on')) n.addEventListener(k.slice(2).toLowerCase(),v); else if(typeof v==='boolean'){ n[k]=v; if(!v) n.removeAttribute(k);} else n.setAttribute(k,v);} for(const k of kids) n.append(k); return n; };
-
-/* ===== 画面制御 ===== */
-function setScreen(name){
-  App.screen=name;
-  $('#screenTitle').textContent= name==='start'?'開始画面': name==='pick'?'モンスター選択画面': name==='moves'?'技選択画面': name==='battle'?'バトル画面':'';
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  $('#screen-'+name).classList.add('active');
-  $('#explain').textContent = name==='start'?'このゲームはモンスターを選び、技をセットしてバトルするブラウザゲームです。': name==='pick'?'相手は6体の候補から3体を選びます。相性を見て自分の3体を選びましょう。': name==='moves'?'各モンスターに技を4つセットしてください。選択済みは上のリストから解除できます。': '技を選ぶ／交代するを駆使して勝利を目指しましょう。';
-  $('#backBtn').style.display=(name==='start')?'none':'inline-flex';
-}
-
-/* ===== 開始 ===== */
-$('#goPick').addEventListener('click',()=>{ if(!App.cpuCandidates.length) App.cpuCandidates = pickRandomDistinct(MONSTERS.map(m=>m.id),6); renderPickScreen(); setScreen('pick'); });
-$('#backBtn').addEventListener('click',()=>{ if(App.screen==='pick') setScreen('start'); else if(App.screen==='moves') setScreen('pick'); else if(App.screen==='battle'){ App.battle=null; setScreen('moves'); }});
-
-/* ===== モンスター選択 ===== */
-function renderPickScreen(){
-  const cpuWrap=$('#cpuCandidates'); cpuWrap.innerHTML='';
-  for(const id of App.cpuCandidates){ cpuWrap.append(monsterCard(byId(MONSTERS,id),{cpu:true})); }
-  $('#btnAdvice').onclick=()=>{ $('#adviceBox').innerHTML=buildAdvice(); };
-  const all=$('#allMonsters'); all.innerHTML='';
-  for(const m of MONSTERS){ all.append(monsterCard(m,{selectable:true, selected:App.playerPick.includes(m.id)})); }
-  const picks=$('#playerPicks'); picks.innerHTML=''; App.playerPick.forEach(id=>picks.append(monsterCard(byId(MONSTERS,id),{mini:true})));
-  $('#pickCount').textContent=App.playerPick.length;
-  $('#toMoveSetup').disabled=(App.playerPick.length!==3);
-  $('#matrixWrap').innerHTML=buildMatrix();
-}
-function monsterCard(m,opt={}){
-  const card=el('div',{class:'monster compact '+(opt.mini?'mini':'' )+' el-'+m.el, title:m.name});
-  const nameWrap = el('div',{class:'head'}, el('div',{class:'name'},m.name));
-  const badge = el('div',{class:'badge'}, EL_ICON[m.el]+' '+m.el);
-  nameWrap.append(badge);
-  // hover/tap で詳細ステータスを表示するオーバーレイ
-  const hoverStats = el('div',{class:'hoverStats'});
-  ['hp','st','atk','def','mag','spd'].forEach(k=>{ hoverStats.append(el('div',{class:'stat'}, (k.toUpperCase()) + ': ' + (m[k] ?? '—'))); });
-  card.append(nameWrap, hoverStats);
-  if(opt.cpu){ card.classList.add('cpuPick'); }
-  if(opt.selected){ card.classList.add('selected'); }
-  if(opt.selectable){ card.style.cursor='pointer'; card.addEventListener('click',()=>{ const i=App.playerPick.indexOf(m.id); if(i>=0) App.playerPick.splice(i,1); else { if(App.playerPick.length>=3) return; App.playerPick.push(m.id);} renderPickScreen(); });
-    // タッチデバイス向け: ヘッダーをタップするとステータス表示をトグル
-    nameWrap.addEventListener('click',(e)=>{ e.stopPropagation(); // toggle only the card
-      card.classList.toggle('showStats');
-    });
-  }
-  return card;
-}
-$('#toMoveSetup').addEventListener('click',()=>{ if(!App.playerPick.length) return; App.moveSetupIndex=0; renderMoveSetup(); setScreen('moves'); });
-
-function buildMatrix(){ const tbl=document.createElement('table'); tbl.className='matrix mono'; const thead=document.createElement('thead'); const trh=document.createElement('tr'); trh.append(document.createElement('th')); ELEMENTS.forEach(d=>{ const th=document.createElement('th'); th.textContent=d; trh.append(th); }); thead.append(trh); tbl.append(thead); const tb=document.createElement('tbody'); ELEMENTS.forEach(att=>{ const tr=document.createElement('tr'); const th=document.createElement('th'); th.textContent=att; tr.append(th); ELEMENTS.forEach(def=>{ const td=document.createElement('td'); const eff=TYPE_EFFECT[att]?.[def]??1.0; if(eff>1){ td.textContent='〇'; td.className='mat-good'; } else if(eff<1){ td.textContent='×'; td.className='mat-bad'; } else { td.textContent='△'; td.className='mat-even'; } tr.append(td); }); tb.append(tr); }); tbl.append(tb); return tbl.outerHTML; }
-function buildAdvice(){ if(!App.cpuCandidates.length) return '候補が未生成です。'; const cands=App.cpuCandidates.map(id=>byId(MONSTERS,id)); const freq={}; cands.forEach(m=>{ freq[m.el]=(freq[m.el]||0)+1; }); const counterSet=new Set(); for(const el of Object.keys(freq)){ for(const atk in TYPE_EFFECT){ if((TYPE_EFFECT[atk]?.[el]||1)>1) counterSet.add(atk); } } const counters=[...counterSet]; const recommend=MONSTERS.filter(m=>counters.includes(m.el)).slice(0,3); if(!recommend.length) return '有利属性が分散。バランス選出推奨。'; const lines=[]; lines.push('候補の属性傾向： '+Object.entries(freq).map(([k,v])=>EL_ICON[k]+k+':'+v).join(' ／ ')); lines.push('有利を取りやすい属性： '+counters.map(el=>EL_ICON[el]+el).join(' ')); lines.push('おすすめ： '+recommend.map(m=>`${m.name}（${EL_ICON[m.el]}${m.el}）`).join('、 ')); return lines.join('<br>'); }
-
-/* ===== 技選択 ===== */
-function renderMoveSetup(){
-  $('#cpuBar').innerHTML='相手の候補： '+App.cpuCandidates.map(id=>{ const m=byId(MONSTERS,id); return `<span class="badge">${EL_ICON[m.el]} ${m.name}</span>`; }).join(' ');
-  // Moves 画面でも候補6体をカードで表示
-  const cpuMovesWrap = $('#cpuCandidatesMoves'); if(cpuMovesWrap){ cpuMovesWrap.innerHTML = ''; App.cpuCandidates.forEach(id=>{ const m = byId(MONSTERS,id); cpuMovesWrap.append(monsterCard(m,{cpu:true})); }); }
-  const wrap=$('#moveSetupArea'); wrap.innerHTML='';
-  const idx=App.moveSetupIndex; const mId=App.playerPick[idx]; const mon=byId(MONSTERS,mId); let sel=App.playerLoadouts[mId]; if(!sel){ App.playerLoadouts[mId]=[]; sel=App.playerLoadouts[mId]; }
-  const root=el('div',{});
-  root.append(
-    el('div',{class:'panel'},
-      el('h3',{},`技セット：${mon.name}（${idx+1}/3）`),
-      el('div',{class:'row'},
-        el('div',{class:'col'}, monsterCard(mon)),
-        el('div',{class:'col'},
-          el('div',{class:'hint'}, 'ちょうど4つ選んでください。選択済みはタップで解除できます。'),
-          el('div',{}, selectedMovesList(sel, mId)),
-          el('div',{style:'margin-top:8px'}, moveListForSelect(mon, sel))
-        )
-      ),
-      el('div',{class:'flow',style:'margin-top:8px'},
-        el('button',{class:'tap', onClick:()=>{ App.playerLoadouts[mId]=[]; renderMoveSetup(); }},'選択をクリア'),
-        el('button',{class:'tap', onClick:()=>{ if(idx>0){ App.moveSetupIndex--; renderMoveSetup(); } }},'◀ 前へ'),
-        el('button',{class:'cta big tap', disabled: sel.length<4, onClick:()=>{ // 4つ揃ったら次へ/バトルへ
-          App.playerLoadouts[mId] = sel.slice(0,4);
-          if(idx<2){ App.moveSetupIndex = Math.min(2, App.moveSetupIndex + 1); // 次のモンスターへ
-            renderMoveSetup();
-            setScreen('moves');
-            return; }
-          // idx===2: バトル前に3体すべてが4技揃っているか検証
-          const incomplete = App.playerPick.find(id => (App.playerLoadouts[id]||[]).length !== 4);
-          if(incomplete){
-            App.moveSetupIndex = App.playerPick.indexOf(incomplete);
-            document.getElementById('explain').textContent = '各モンスターに技を4つずつセットしてください。未完了のモンスターがあります。';
-            renderMoveSetup();
-            return;
-          }
-          // CPU側の選出が足りない場合は再生成
-          if(App.cpuCandidates.length < 3){ App.cpuCandidates = pickRandomDistinct(MONSTERS.map(m=>m.id), 6); }
-          App.cpuTeam = pickRandomDistinct(App.cpuCandidates,3);
-          App.cpuLoadouts={}; for(const id of App.cpuTeam){ App.cpuLoadouts[id]=autoPickMoves(byId(MONSTERS,id)); }
-          startBattle(); setScreen('battle');
-        }}, (idx<2?'次へ':'バトルへ'))
-      )
-    )
-  );
-  wrap.append(root);
-}
-function selectedMovesList(sel, mId){ const box=el('div',{class:'grid'}); sel.slice(0,4).forEach(id=>{ const mv=byId(MOVES,id); const btn=el('button',{class:'btn mini tap', onClick:()=>{ const i=App.playerLoadouts[mId].indexOf(mv.id); if(i>=0){ App.playerLoadouts[mId].splice(i,1); renderMoveSetup(); } }}, `✕ ${mv.name} / ${mv.type} / ${mv.el?EL_ICON[mv.el]+' '+mv.el:'—'} / 威力${mv.pow} / ST-${mv.cost}`); box.append(btn); }); return box; }
-function moveListForSelect(mon, sel){ const list=el('div',{class:'grid'}); MOVES.forEach(mv=>{ const b=el('button',{class:'btn tap'}, el('div',{}, `${mv.name} ${mv.el?('｜'+EL_ICON[mv.el]+' '+mv.el):''}`), el('div',{class:'hint'}, `${mv.type} / 威力${mv.pow} / 消費ST ${mv.cost} ${mv.note?('｜'+mv.note):''}`)); b.disabled = sel.includes(mv.id) || sel.length>=4; b.addEventListener('click',()=>{ App.playerLoadouts[mon.id].push(mv.id); renderMoveSetup(); }); list.append(b); }); return list; }
-function autoPickMoves(mon){ const same=MOVES.filter(m=>m.el===mon.el); const phys=same.find(m=>m.type==='物理')||MOVES.find(m=>m.type==='物理'&&!m.el); const mag=same.find(m=>m.type==='魔法')||MOVES.find(m=>m.type==='魔法'&&!m.el); const pool=MOVES.filter(m=>m!==phys&&m!==mag&&m.type!=='補助'); const rest=pickRandomDistinct(pool.map(m=>m.id),2); return [phys?.id,mag?.id,...rest].filter(Boolean).slice(0,4); }
-
-/* ===== バトル ===== */
-function startBattle(){ App.battle={ you:App.playerPick.map(id=>mkFighter(byId(MONSTERS,id),App.playerLoadouts[id]||[])), foe:App.cpuTeam.map(id=>mkFighter(byId(MONSTERS,id),App.cpuLoadouts[id]||[])), iact:0,jact:0, over:false,turn:1,log:[]}; renderBattle(); logLine('バトル開始！ あなたは '+App.battle.you.map(f=>f.name).join(' / ')+'、あいては3体を選出しています。'); }
-function mkFighter(m,moveIds){ return {...m,curHP:m.hp,curST:m.st,guard:false,alive:true,moves:moveIds.map(id=>byId(MOVES,id))}; }
-function renderBattle(){ const B=App.battle; const Y=B.you[B.iact], F=B.foe[B.jact]; $('#youName').textContent=Y.name; $('#youEl').textContent=EL_ICON[Y.el]+' '+Y.el; $('#foeName').textContent=F.name; $('#foeEl').textContent=EL_ICON[F.el]+' '+F.el; setBar('#youHP',Y.curHP/Y.hp); setBar('#youST',Y.curST/Y.st); setBar('#foeHP',F.curHP/F.hp); // foe ST is kept internal per requirements: hide or de-emphasize
-  // ST=0 blink effect on front monsters
-  const youCard = $('.you'); const foeCard = $('.foe'); if(Y.curST<=0){ youCard.classList.add('st-zero'); } else { youCard.classList.remove('st-zero'); } if(F.curST<=0){ foeCard.classList.add('st-zero'); } else { foeCard.classList.remove('st-zero'); }
-  // numeric labels for bars (attach or update)
-  try{
-    const youHPBar = $('#youHP').parentElement; const youSTBar = $('#youST').parentElement; const foeHPBar = $('#foeHP').parentElement;
-    const ensure=(parent,txt)=>{ let n=parent.querySelector('.barNum'); if(!n){ n=document.createElement('div'); n.className='barNum'; parent.appendChild(n); } n.textContent=txt; };
-    ensure(youHPBar, `${Y.curHP}/${Y.hp}`); ensure(youSTBar, `${Y.curST}/${Y.st}`); ensure(foeHPBar, `${F.curHP}/${F.hp}`);
-  }catch(e){}
-  const cmd=$('#cmdArea'); cmd.innerHTML=''; Y.moves.forEach(mv=>{
-    const info=computePreview(Y,F,mv);
-    const b=el('button',{class:'mv tap btn el-'+(mv.el||'光')});
-    const effMark= info.eff>1.0? el('span',{class:'eff good'},'〇'): info.eff<1.0? el('span',{class:'eff bad'},'×'): el('span',{class:'eff'},'');
-    // ST drain preview on target (per-hit * hits)
-    const totalTargetStDrain = (info.hits||1) * (info.stPerHit||0);
-    const metaParts = [ el('span',{class:'badge'}, `${mv.el?EL_ICON[mv.el]+' '+mv.el:'—'}`), el('span',{class:'pow'}, `威力 ${mv.pow}${info.mult>1?('→'+info.viewPow):''}`), el('span',{class:'badge cost'}, `ST-${mv.cost}`) ];
-    if(totalTargetStDrain>0) metaParts.push(el('span',{class:'badge cost'}, `相手ST-${totalTargetStDrain}`));
-    b.append(el('div',{},mv.name), el('div',{class:'meta'}, ...metaParts, effMark));
-    b.disabled = !Y.alive;
-    if(mv.type!=='補助' && Y.curST < mv.cost){ b.title = `現在ST不足（必要 ${mv.cost}）。使用時に残りSTを消費し、不足分は自身のHPで補填します。`; }
-    else { b.title = totalTargetStDrain>0 ? `ヒット毎に相手ST-${info.stPerHit || 0}（合計 ${totalTargetStDrain}）` : ''; }
-    b.addEventListener('click',()=>issueTurn({kind:'move',move:mv}));
-    cmd.append(b);
-  });
-  const sp=$('#swapArea'); sp.innerHTML=''; App.battle.you.forEach((f,i)=>{ if(!f.alive||i===App.battle.iact) return; const b=el('button',{class:'btn mini tap'}, `${f.name}（${EL_ICON[f.el]}）`); b.addEventListener('click',()=>issueTurn({kind:'swap',to:i})); sp.append(b); }); $('#openSwap').onclick=()=>{}; $('#giveUp').onclick=()=>issueTurn({kind:'giveup'}); $('#battleLog').innerHTML=App.battle.log.map(l=>'• '+l).join('<br>'); $('#battleLog').scrollTop=99999; }
-function setBar(sel,ratio){ const n=$(sel); const pct=Math.max(0,Math.min(100,Math.round(ratio*100))); n.style.width=pct+'%'; }
-function computePreview(att,def,mv){ if(mv.type==='補助') return {eff:1,mult:1,viewPow:0,hits:mv.hits||1,stPerHit:0}; const stab= mv.el&&mv.el===att.el?2.0:1.0; const eff= mv.el?(TYPE_EFFECT[mv.el]?.[def.el]??1.0):1.0; const mult=stab*eff; const viewPow=Math.floor(mv.pow*mult); const hits = mv.hits || 1; const stPerHit = (eff>1?20:10); return {eff,mult,viewPow,hits,stPerHit}; }
-async function issueTurn(your){
-  if(App.battle.over) return;
-  const B=App.battle;
-  const Y=B.you[B.iact], F=B.foe[B.jact];
-  const actYou=your; const actFoe=decideAI(F,Y);
-  const order=decideOrder(Y,F);
-  const acts = order==='you-first' ? [{who:'you',act:actYou},{who:'foe',act:actFoe}] : [{who:'foe',act:actFoe},{who:'you',act:actYou}];
-
-  // Process actions sequentially, awaiting animations/processing so logs match visual order
-  for(const step of acts){
-    if(App.battle.over) break;
-    const res = await resolveAction(step.who, step.act);
-    if(res==='end') break;
-    // update UI between actions so HP/ST bars reflect results before next action
-    renderBattle();
-  }
-
-  // End-of-turn: Back monsters regenerate ST (1% of max ST, min 1)
-  const regen = (m)=>{ const amount = Math.max(1, Math.floor(m.st * 0.01)); m.curST = Math.min(m.st, (m.curST||0) + amount); };
-  B.you.forEach((f,i)=>{ if(!f.alive) return; if(i!==B.iact){ regen(f); } });
-  B.foe.forEach((f,i)=>{ if(!f.alive) return; if(i!==B.jact){ regen(f); } });
-  App.battle.turn++; renderBattle(); checkEnd();
-}
-function decideOrder(Y,F){ if(Y.spd>F.spd) return 'you-first'; if(F.spd>Y.spd) return 'foe-first'; return Math.random()<.5?'you-first':'foe-first'; }
-function resolveAction(who,action){
-  return new Promise((resolve)=>{
-    const B=App.battle;
-    const me=(who==='you')?B.you[B.iact]:B.foe[B.jact];
-    const op=(who==='you')?B.foe[B.jact]:B.you[B.iact];
-    const meCard=(who==='you')?$('.you'):$('.foe');
-    const opCard=(who==='you')?$('.foe'):$('.you');
-    if(!me.alive){ resolve(); return; }
-    if(action.kind==='giveup'){ logLine((who==='you'?'あなた':'あいて')+'は降参した！'); endBattle(who==='you'?'lose':'win'); resolve('end'); return; }
-    if(action.kind==='swap'){ if(action.to!=null){ if(who==='you') B.iact=action.to; else B.jact=action.to; const cur=(who==='you')?B.you[B.iact]:B.foe[B.jact]; logLine((who==='you'?'あなた':'あいて')+'は '+cur.name+' に交代した！'); me.guard=false; (who==='you'?meCard:opCard).classList.add(who==='you'?'youGlow':'foeGlow'); setTimeout(()=> (who==='you'?meCard:opCard).classList.remove(who==='you'?'youGlow':'foeGlow'),350); } resolve(); return; }
-    if(action.kind==='move'){
-      const mv=action.move;
-      if(mv.type==='補助'){
-        if(me.curST < mv.cost){ const deficit = mv.cost - me.curST; me.curST = 0; me.curHP = Math.max(0, me.curHP - deficit); logLine((who==='you'?'あなた':'あいて')+`はST不足だが『${mv.name}』を使用（不足分 ${deficit} をHPで補填）`); }
-        else { me.curST -= mv.cost; }
-        me.guard=true; logLine((who==='you'?'あなた':'あいて')+'は『'+mv.name+'』で身を守っている！'); (who==='you'?meCard:opCard).classList.add('youGlow'); setTimeout(()=> (who==='you'?meCard:opCard).classList.remove('youGlow'),350); resolve(); return;
-      }
-      if(me.curST < mv.cost){ const deficit = mv.cost - me.curST; me.curST = 0; me.curHP = Math.max(0, me.curHP - deficit); logLine((who==='you'?'あなた':'あいて')+`はST不足だが『${mv.name}』を使用（不足分 ${deficit} をHPで補填）`); }
-      else { me.curST -= mv.cost; }
-      const hits = mv.hits || 1;
-      animateAttack((who==='you')?$('#youSide'):$('#foeSide'), (who==='you')?$('#foeSide'):$('#youSide'), mv.el||'光', ()=>{
-        (async ()=>{
-          for(let h=1; h<=hits; h++){
-            const eff = mv.el?(TYPE_EFFECT[mv.el]?.[op.el]??1.0):1.0;
-            const stDrain = 10 * (eff>1?2:1);
-            if(op.curST >= stDrain){ op.curST = Math.max(0, op.curST - stDrain); }
-            else { const deficit = stDrain - op.curST; op.curST = 0; op.curHP = Math.max(0, op.curHP - deficit); }
-            let dealt = calcDamage(me,op,mv);
-            if(op.guard){ dealt = Math.floor(dealt*0.5); op.guard=false; }
-            op.curHP = Math.max(0, op.curHP - dealt);
-            const pv=computePreview(me,op,mv); const effTxt=pv.eff>1.0?'（こうかはばつぐん！）':(pv.eff<1.0?'（いまひとつ…）':'');
-            logLine((who==='you'?'あなた':'あいて')+`の『${mv.name}』！（ヒット ${h}/${hits}） 威力${mv.pow}${pv.mult>1?('→'+pv.viewPow):''} ${effTxt}`);
-            const big = dealt >= Math.max(20, Math.round(op.hp*0.25)); const opCardEl=(who==='you')?$('.foe'):$('.you'); if(big){ opCardEl.classList.add('shake'); setTimeout(()=>opCardEl.classList.remove('shake'),500); }
-            if(op.curHP<=0){ op.alive=false; logLine((who==='you'?'あいて':'あなた')+'の '+op.name+' は たおれた…'); autoSwapIfPossible(who==='you'?'foe':'you'); break; }
-            renderBattle();
-            await new Promise(r=>setTimeout(r, 180));
-          }
-          resolve();
-        })();
-      });
-    }
-  });
-}
-function calcDamage(att,def,mv){ const atk = mv.type==='物理'?att.atk:att.mag; const base=Math.max(1,Math.floor(mv.pow*(10+atk)/(10+def.def))); const stab= mv.el&&mv.el===att.el?2.0:1.0; const eff= mv.el?(TYPE_EFFECT[mv.el]?.[def.el]??1.0):1.0; const rand=0.85+Math.random()*0.15; const dmg=Math.floor(base*stab*eff*rand); return Math.max(1,dmg); }
-function autoSwapIfPossible(side){ const B=App.battle; if(side==='you'){ const idx=B.you.findIndex((f,i)=>f.alive&&i!==B.iact); if(idx>=0){ B.iact=idx; logLine('あなたは '+B.you[idx].name+' をくりだした！'); } else endBattle('lose'); } else { const idx=B.foe.findIndex((f,i)=>f.alive&&i!==B.jact); if(idx>=0){ B.jact=idx; logLine('あいては '+B.foe[idx].name+' をくりだした！'); } else endBattle('win'); } }
-function decideAI(me,op){ // AI may use moves even if ST不足（不足分は自身のHPで補填される）、ただし自殺ラインの判定は回避する
-  const usable = me.moves.slice(); let best=null,bestScore=-1;
-  for(const mv of usable){ if(mv.type==='補助'){ const need=(me.curST<mv.cost+12)||(typeEff(mv.el,op.el)<1&&op.curHP>op.hp*0.6); const sc=need?5:0; if(sc>bestScore){ bestScore=sc; best={kind:'move',move:mv}; } } else {
-      const preview=computePreview(me,op,mv); const atk = mv.type==='物理'?me.atk:me.mag;
-      // If using this move would require more ST than current and the deficit >= curHP, deprioritize (would KO self)
-      const deficit = Math.max(0, mv.cost - me.curST);
-      const killSelfPenalty = deficit >= me.curHP ? 0.01 : 1.0;
-      const score = preview.viewPow*(10+atk)/(10+op.def) * killSelfPenalty;
-      if(score>bestScore){ bestScore=score; best={kind:'move',move:mv}; }
-    } }
-  if(!best){ const cand=App.battle.foe.map((f,i)=>({f,i})).filter(x=>x.f.alive&&x.i!==App.battle.jact); const good=cand.find(x=> typeEff(null,op.el,x.f.el)>1.0 ); if(good) return {kind:'swap',to:good.i}; return {kind:'move',move:me.moves[0]}; } return best; }
-function typeEff(attEl,defEl,overrideAttEl){ const el=overrideAttEl||attEl; return el?(TYPE_EFFECT[el]?.[defEl]??1.0):1.0; }
-function checkEnd(){ if(App.battle?.over) return; const youDead=App.battle.you.every(f=>!f.alive); const foeDead=App.battle.foe.every(f=>!f.alive); if(youDead||foeDead){ endBattle(foeDead?'win':'lose'); } }
-function endBattle(result){ App.battle.over=true; $('#battleResult').style.display='block'; $('#resultText').textContent=(result==='win'?'勝利！':'敗北…'); }
-$('#restart').addEventListener('click',()=>{ App.cpuCandidates=[]; App.cpuTeam=[]; App.playerPick=[]; App.playerLoadouts={}; App.battle=null; $('#battleResult').style.display='none'; renderPickScreen(); setScreen('start'); });
-
-/* ===== 演出・ユーティリティ ===== */
-function logLine(t){ App.battle.log.push(t); const wrap = $('#battleLog'); wrap.innerHTML = App.battle.log.map(l=> `<div class="logEntry">• ${escapeHtml(l)}</div>`).join(''); wrap.scrollTop = wrap.scrollHeight; }
-
-// simple escape to avoid accidental HTML injection in logs
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" })[c]); }
-function animateAttack(fromSide,toSide,elName,onHit){ const c=$('#fxCanvas'); const rFrom=fromSide.querySelector('.card').getBoundingClientRect(); const rTo=toSide.querySelector('.card').getBoundingClientRect(); const rCan=c.getBoundingClientRect(); const start={x:(rFrom.right - rCan.left)-40,y:(rFrom.top + rFrom.height*0.35 - rCan.top)}; const end={x:(rTo.left - rCan.left)+40,y:(rTo.top + rTo.height*0.35 - rCan.top)}; runProjectile(c,start,end,EL_COLOR[elName]||'#67d4ff',onHit); }
-function runProjectile(canvas,start,end,color,onHit){ const ctx=canvas.getContext('2d'); let t=0,T=320; const sx=start.x,sy=start.y,ex=end.x,ey=end.y; const raf=()=>{ t+=16; ctx.clearRect(0,0,canvas.width,canvas.height); const p=Math.min(1,t/T); const x=sx+(ex-sx)*p; const y=sy+(ey-sy)*p + Math.sin(p*Math.PI)*-12; ctx.globalAlpha=.3; ctx.fillStyle=color; for(let i=0;i<6;i++){ const tt=Math.max(0,p - i*0.04); const xx=sx+(ex-sx)*tt; const yy=sy + (ey-sy)*tt + Math.sin(tt*Math.PI)*-12; ctx.beginPath(); ctx.arc(xx,yy,3-i*0.35,0,Math.PI*2); ctx.fill(); } ctx.globalAlpha=1; ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fillStyle=color; ctx.fill(); if(p<1){ requestAnimationFrame(raf);} else { burst(canvas,end,color,onHit);} }; requestAnimationFrame(raf); }
-function burst(canvas,pos,color,onDone){ const ctx=canvas.getContext('2d'); let t=0,T=220; const parts=Array.from({length:14}).map(()=>({x:pos.x,y:pos.y,vx:(Math.random()*2-1)*2.2,vy:(Math.random()*2-1)*2.2,r:2+Math.random()*2})); const raf=()=>{ t+=16; const p=Math.min(1,t/T); ctx.clearRect(0,0,canvas.width,canvas.height); for(const pt of parts){ pt.x+=pt.vx; pt.y+=pt.vy; pt.vy+=.03; ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r*(1-p), 0, Math.PI*2); ctx.fillStyle=color; ctx.globalAlpha=1-p; ctx.fill(); } if(p<1){ requestAnimationFrame(raf);} else { ctx.clearRect(0,0,canvas.width, canvas.height); onDone&&onDone(); } }; requestAnimationFrame(raf); }
-function byId(arr,id){ return arr.find(x=>x.id===id); }
-function pickRandomDistinct(arr,n){ const pool=arr.slice(); const out=[]; while(out.length<n && pool.length){ const i=Math.floor(Math.random()*pool.length); out.push(pool.splice(i,1)[0]); } return out; }
-
-/* 初期 */
-renderPickScreen(); setScreen('start');
-</script>
+  <!-- Data scripts: monsters.js, moves.js and types.js must load before JS modules -->
+  <script src="data/monsters.js"></script>
+  <script src="data/moves.js"></script>
+  <script src="data/types.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/affinity.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/select.js"></script>
+  <script src="js/skill.js"></script>
+  <script src="js/battle.js"></script>
 </body>
 </html>

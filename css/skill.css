@@ -1,0 +1,19 @@
+/* Styles for skill selection screen */
+#skill-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+#skill-tabs button {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  cursor: pointer;
+  border-radius: 6px;
+}
+#skill-tabs button.active {
+  background: #bfdbfe;
+}
+#skill-panel .move-card {
+  flex: 1 0 calc(50% - 12px);
+}

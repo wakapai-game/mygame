@@ -1,0 +1,10 @@
+/* Styles specific to the monster selection screen. */
+#enemy-candidates .mon-card {
+  background: #f9fafb;
+}
+#enemy-candidates .mon-card:hover {
+  background: #e0f2fe;
+}
+#player-list .mon-card:hover {
+  background: #fef9c3;
+}
