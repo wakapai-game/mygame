@@ -1,23 +1,84 @@
 <!doctype html>
 <html lang="ja">
-<head>
+
+<head> <!--headとは、ページの情報を入れる場所-->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>共通ヘッダー/フッター動作テスト</title>
   <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <style>
+    /* このページだけの背景設定 */
+    body.home {
+      background-image: url("./assets/img/title.webp");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed; /* 好みで外してOK */
+    }
+    /* 文字を読みやすくする薄いグラデ */
+    .page-overlay {
+      min-height: 100vh;
+      background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.25));
+    }
+
+    /* 中央配置のヒーロー */
+.hero {
+  min-height: 80vh;               /* 画面のだいたい中央に */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 24px 16px;
+}
+
+/* ボタン風リンク */
+.btn-primary {
+  display: inline-block;
+  padding: 14px 28px;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.9);
+  color: #0b0f16;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn-primary:hover {
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+}
+
+  </style>
+
 </head>
-<body>
+
+<body class="home"><!--class="home"とは、このページだけ背景画像を変えるための指定-->
   <!-- 先頭スラッシュ付き！ -->
   <div data-include="/partials/header.html"></div>
 
-  <main>
-    <h1>トップページ</h1>
-    <p>モンスター育成対戦（仮）</p>
-  </main>
+ <main class="page-overlay">
+  <section class="hero">
+    <h1>モンスター育成対戦（仮）</h1>
+    <p>読み合いと駆け引きがアツいブラウザゲーム・デモ版</p>
+    <a class="btn-primary" href="./demo.html" aria-label="デモプレイ開始へ移動">
+      デモプレイ開始
+    </a>
+  </section>
+</main>
+
 
   <!-- 先頭スラッシュ付き！ -->
   <div data-include="/partials/footer.html"></div>
 
   <script defer src="/assets/js/include.js"></script>
 </body>
+
 </html>
