@@ -3,167 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>モンスター対戦（仮）｜デモサイト</title>
-  <meta name="description" content="読み合いと駆け引きがアツい“モンスター対戦”の公式デモ。30秒で世界観とルールがわかり、そのままブラウザで体験開始。">
-  <meta name="theme-color" content="#0b0f16" />
-  <link rel="stylesheet" href="./assets/css/site.css" />
+  <title>共通ヘッダー/フッター動作テスト</title>
+  <link rel="stylesheet" href="/assets/css/site.css" />
 </head>
 <body>
-  <!-- Header -->
-  <header class="site-header">
-    <a class="brand" href="./" aria-label="トップへ">
-      <span class="brand__logo" aria-hidden="true">★</span>
-      <span class="brand__text">Monster Duel</span>
-    </a>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="nav">MENU</button>
-    <nav id="nav" class="nav" aria-expanded="false">
-      <a href="./demo.html">デモ</a>
-      <a href="./concept/">世界観</a>
-      <a href="./pages/monsters.html">モンスター</a>
-      <a href="./pages/moves.html">技</a>
-      <a href="./pages/type-chart.html">相性表</a>
-      <a href="./concept/">コンセプト</a>
-      <a href="./requirements/">要件定義</a>
-      <a href="./changelog.html">更新情報</a>
-    </nav>
-  </header>
+  <!-- 先頭スラッシュ付き！ -->
+  <div data-include="/partials/header.html"></div>
 
-  <!-- Decorative Background -->
-  <div class="bg" aria-hidden="true">
-    <canvas id="stars"></canvas>
-    <div class="gradient"></div>
-    <svg class="blob" viewBox="0 0 600 600">
-      <g transform="translate(300,300)">
-        <path d="M120,-162C162,-137,198,-108,211,-69C224,-30,214,20,195,61C176,102,147,133,111,165C75,197,33,229,-5,238C-43,247,-86,233,-131,214C-176,195,-224,170,-250,130C-276,89,-279,33,-263,-16C-246,-66,-210,-108,-171,-138C-132,-169,-90,-187,-50,-194C-10,-201,29,-198,67,-189C105,-180,141,-165,120,-162Z"></path>
-      </g>
-    </svg>
-  </div>
-
-  <!-- Hero -->
-  <main id="top" class="hero" role="main">
-    <div class="hero__content">
-      <p class="eyebrow">戦略×読み合い×一瞬の判断</p>
-      <h1 class="hero__title"><br>モンスター対戦ゲーム(仮)</h1>
-      <p class="hero__lead">
-        3体のモンスターでデッキを組み、技を選び、相手の手を読む。<br>
-        30秒でルールがわかる、ブラウザでそのまま遊べる対戦デモ。
-      </p>
-      <div class="hero__cta">
-        <a class="btn btn--primary" href="./demo.html">▶︎ デモを今すぐ遊ぶ</a>
-        <a class="btn" href="./concept/">30秒で世界観と遊び方</a>
-      </div>
-      <ul class="badges" aria-label="強み">
-        <li>インストール不要</li>
-        <li>スマホ&PC対応</li>
-        <li>1バトル1〜3分</li>
-      </ul>
-    </div>
-
-    <figure class="hero__preview" aria-label="ゲーム画面イメージ">
-      <div class="screen">
-        <div class="screen__hud"><span>HP 120 / 120</span><span>ATK↑</span><span>雨</span></div>
-        <div class="screen__arena">
-          <div class="mon mon--ally"></div>
-          <div class="mon mon--enemy"></div>
-        </div>
-        <div class="screen__cmd">
-          <button class="chip">攻撃</button>
-          <button class="chip">入れ替え</button>
-          <button class="chip">防御</button>
-          <button class="chip">特殊</button>
-        </div>
-      </div>
-      <figcaption>※イメージ／実際のデモは「デモ」ページから</figcaption>
-    </figure>
+  <main>
+    <h1>トップページ</h1>
+    <p>モンスター育成対戦（仮）</p>
   </main>
 
-<section class="section" id="spotlight">
-  <h2>注目のモンスター</h2>
-  <p class="sub">気になる子をタップすると、モンスター一覧の該当位置へ移動します。</p>
-  <div id="monSpot" class="cards"></div>
-</section>
+  <!-- 先頭スラッシュ付き！ -->
+  <div data-include="/partials/footer.html"></div>
 
-<!-- ▼▼ 追加: トレーラー ▼▼ -->
-<section class="section" id="trailer">
-  <h2>トレーラー</h2>
-  <p class="sub">ゲームのテンポと“駆け引きの熱”をショート映像で。</p>
-
-  <figure class="video-frame">
-    <video
-      id="gameTrailer"
-      class="video"
-      controls
-      preload="metadata"
-      playsinline
-      webkit-playsinline
-      poster="./assets/media/trailer-poster.png"
-      title="モンスターデュエル：心理戦の芸術（トレーラー）"
-      aria-label="モンスターデュエル：心理戦の芸術（トレーラー）"
-    >
-      <!-- 日本語名のまま使う場合は src をURLエンコードしたものに -->
-      <source src="./assets/media/trailer.mp4" type="video/mp4" />
-      お使いのブラウザは動画再生に対応していません。
-      <a href="./assets/media/trailer.mp4" download>動画をダウンロード</a>
-    </video>
-
-    <figcaption class="muted" style="margin-top:.5rem">
-      音あり推奨。ミュートで自動再生する端末もあります（タップで解除）。
-      <a href="./assets/media/trailer.mp4" class="inline-link">ダウンロード</a>
-    </figcaption>
-  </figure>
-
-  <div class="video-cta">
-    <a class="btn btn--primary" href="./demo.html">▶ デモを遊ぶ</a>
-  </div>
-</section>
-<!-- ▲▲ ここまで追加 ▲▲ -->
-
-<!-- 末尾のスクリプト群の直前に追加読み込み（任意：自動再生＆レジューム） -->
-<script src="./assets/js/trailer.js" defer></script>
-
-
-  <!-- World -->
-  <section class="section" id="world">
-    <h2>世界観</h2>
-    <p class="sub">文明崩壊後の近未来。人々はモンスターと共に暮らし、対戦は“魅せる技術”として文化になった。</p>
-    <div class="cards">
-      <a class="card link-card" href="./concept/overall.html">
-        <h3>全体像</h3>
-        <p>ゲームサイクルと舞台設定の要点。</p>
-      </a>
-      <a class="card link-card" href="./concept/growth.html">
-        <h3>育成の文脈</h3>
-        <p>絆・日常・小さな英雄譚。</p>
-      </a>
-      <a class="card link-card" href="./concept/battle.html">
-        <h3>バトルの流儀</h3>
-        <p>読み合いがエンタメになる理由。</p>
-      </a>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="section section--grid" aria-labelledby="features-title">
-    <div class="section__head">
-      <h2 id="features-title">ゲームの魅力</h2>
-    </div>
-    <ul class="feature-grid">
-      <li><h3>短時間で熱い駆け引き</h3><p>1バトル1〜3分。スキマ時間にサクッと。</p></li>
-      <li><h3>ビルドの自由度</h3><p>技×役割の組み合わせで無数の戦術。</p></li>
-      <li><h3>リプレイ共有</h3><p>対戦履歴をURL化。SNSで議論。</p></li>
-      <li><h3>スマホ最適化</h3><p>縦横どちらでも操作しやすいUI。</p></li>
-    </ul>
-  </section>
-
-  <footer class="site-footer">
-    <p>© <span id="year"></span> Monster Duel Project</p>
-    <nav>
-      <a href="./robots.txt">robots</a>
-      <span aria-hidden="true">·</span>
-      <a href="./sitemap.xml">sitemap</a>
-    </nav>
-  </footer>
-
-  <script src="./assets/js/main.js" defer></script>
+  <script defer src="/assets/js/include.js"></script>
 </body>
 </html>

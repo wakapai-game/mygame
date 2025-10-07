@@ -113,3 +113,11 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,s
 .video-cta { margin-top: 12px; display: flex; gap: 8px; }
 .inline-link { text-decoration: underline; }
 
+body { margin:0; font-family: system-ui, sans-serif; line-height:1.6; }
+.site-header { background:#0b0f16; color:#fff; display:flex; align-items:center; gap:1rem; padding:12px 16px; }
+.site-header .brand { color:#fff; text-decoration:none; font-weight:700; }
+.nav a { color:#cfe3ff; text-decoration:none; margin-right:12px; }
+.nav a:hover { text-decoration:underline; }
+.nav-toggle { margin-left:auto; background:#1f2a44; color:#fff; border:0; padding:8px 12px; border-radius:6px; }
+main { padding:24px 16px; }
+.site-footer { background:#111; color:#bbb; padding:16px; text-align:center; }

@@ -1,0 +1,22 @@
+<header class="site-header">
+  <a class="brand" href="/">Monster Duel</a>
+
+  <button class="nav-toggle" aria-expanded="false" aria-controls="nav">MENU</button>
+
+  <nav id="nav" class="nav" aria-expanded="true">
+    <a href="/index.html">Home</a>
+    <a href="/pages/monsters.html">モンスター</a>
+    <a href="/pages/moves.html">技</a>
+  </nav>
+</header>
+<script>
+  const navToggle = document.querySelector('.nav-toggle');
+  const nav = document.getElementById('nav');
+
+  navToggle.addEventListener('click', () => {
+    const expanded = navToggle.getAttribute('aria-expanded') === 'true' || false;
+    navToggle.setAttribute('aria-expanded', !expanded);
+    nav.setAttribute('aria-expanded', !expanded);
+  });
+
+  
