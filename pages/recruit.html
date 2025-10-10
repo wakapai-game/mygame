@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI×ゲーム開発メンバー募集｜モンスター育成・対戦ブラウザゲーム（プロトタイプ）</title>
+  <meta name="description" content="個人主導のAI×ゲーム開発プロジェクトのメンバー募集。毎日5分の小さなアウトプット歓迎。Slackでチャット、週1ミーティング。GitHub必須。募集職種：AIエンジニア／コンセプトアート／ゲームプログラマー（対戦システム）。" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AI×ゲーム開発メンバー募集" />
+  <meta property="og:description" content="毎日5分のアウトプット歓迎。Slack＋週1ミーティング。GitHub必須。AIエンジニア／コンセプトアート／ゲームプログラマー募集。" />
+  <meta property="og:image" content="/assets/og/recruit.jpg" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <!-- ▼ このページ専用のスタイル（他ページと衝突しないよう header/footer セレクタは使わない） -->
+  <style>
+    :root{
+      --bg:#0f1320; --card:#151a2c; --ink:#e9ecf1; --muted:#b6bfd6;
+      --brand:#6ad1ff; --accent:#a0ffb3; --danger:#ff7a7a; --line:#232b45;
+    }
+    body.recruit{background:linear-gradient(180deg,#0b0f1a, var(--bg)); color:var(--ink)}
+    *{box-sizing:border-box}
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .wrap{max-width:980px;margin:0 auto;padding:28px 20px 72px}
+    .page-head{padding:28px 0 8px;border-bottom:1px solid var(--line);margin-bottom:24px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand__logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--accent));}
+    .brand__title{font-weight:800;letter-spacing:.02em}
+
+    .hero{background:linear-gradient(135deg,rgba(106,209,255,.15),rgba(160,255,179,.06));border:1px solid var(--line);border-radius:18px;padding:22px 20px;margin:10px 0 22px}
+    .hero h1{font-size:1.8rem;margin:.2em 0 .4em}
+    .hero p{color:var(--muted);margin:.4em 0}
+    .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+    .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#101630;padding:10px 14px;border-radius:12px;color:var(--ink);font-weight:600}
+    .btn--primary{background:linear-gradient(135deg,var(--brand),#58a8ff);border-color:transparent;color:#07223a}
+    .btn--ghost{background:transparent}
+
+    section{margin:30px 0}
+    h2{font-size:1.4rem;margin:0 0 10px}
+    h3{font-size:1.1rem;margin:18px 0 8px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+    .grid{display:grid;gap:16px}
+    @media(min-width:800px){.grid.cols-2{grid-template-columns:1fr 1fr}.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+    ul{margin:8px 0 0 18px}
+    li{margin:6px 0}
+    .note{color:var(--muted);font-size:.95rem}
+    .taglist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .tag{border:1px solid var(--line);background:#0f1428;border-radius:999px;padding:6px 10px;font-size:.85rem;color:var(--muted)}
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;background:#0c1224;border:1px solid var(--line);padding:2px 6px;border-radius:6px}
+  </style>
+  <!-- ▲ ページ専用CSSここまで -->
+</head>
+
+<body class="recruit">
+  <!-- 共通ヘッダー -->
+  <div data-include="/partials/header.html"></div>
+
+  <main>
+    <div class="wrap">
+      <!-- ▼ 提供HTMLの<header>は、共通ヘッダーと衝突しないよう <div class="page-head brand"> に変更 -->
+      <div class="page-head brand">
+        <div class="brand__logo" aria-hidden="true"></div>
+        <div>
+          <div class="brand__title">AI×ゲーム開発メンバー募集</div>
+          <div class="note">モンスター育成・対戦ブラウザゲーム｜個人主導プロジェクト（プロトタイプ）</div>
+        </div>
+      </div>
+
+      <section class="hero">
+        <h1>一緒に開発してくれるメンバー募集</h1>
+        <p>目的：<strong>Webサイト＋ブラウザゲームで認知活動と“面白さ”を検証し、プロトタイプを完成</strong>させること。</p>
+        <p>本プロジェクトは<strong>代表（私）が最終決定者</strong>です。全体の方向性・採用可否は代表が決定します。</p>
+        <div class="cta">
+          <a class="btn btn--primary" href="https://x.com/gamutukurita" target="_blank" rel="noopener">Xで連絡する</a>
+          <a class="btn btn--ghost" href="https://wakapai-game.github.io/mygame/" target="_blank" rel="noopener">開発中サイトを見る</a>
+        </div>
+      </section>
+
+      <section>
+        <h2>募集職種と内容</h2>
+        <div class="grid cols-3">
+          <article class="card">
+            <h3>① AIエンジニア（活用推進・自動化）</h3>
+            <p class="note">AIを道具として最大活用し、開発効率を底上げする実務推進ポジション（プロンプト×自動化）。</p>
+            <ul>
+              <li>AI活用基盤の整備（プロンプト設計・自動化・ナレッジ共有）</li>
+              <li>コーディング支援（HTML/CSS/JS/TypeScript など）</li>
+              <li>AgentBuilder／LangChain 等の調査・実装</li>
+              <li>AIによるドキュメント生成／リファクタリング</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>② コンセプトアート（世界観・UI/UX 提案）</h3>
+            <p class="note">提出アートは<strong>方向性検討の素材</strong>です。<strong>最終採用・デザイン決定は代表</strong>が行います（不採用の可能性あり）。</p>
+            <ul>
+              <li>タイトル画面／対戦画面などの画面デザイン案</li>
+              <li>背景・モンスター等のコンセプトアート</li>
+              <li>「遊びたくなる」絵・ビジュアルの提案</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>③ ゲームプログラマー（対戦システム）</h3>
+            <p class="note">コマンドバトルの中核ロジック設計・実装を担当。</p>
+            <ul>
+              <li>ブラウザ上で動作する対戦システムの設計・実装</li>
+              <li>技・ステータス・属性相性・効果処理などのロジック</li>
+              <li>Canvas／WebGL を用いた演出・UI制御</li>
+              <li>GitHub でのコード管理・共同開発</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>参加方法・働き方</h2>
+        <div class="card">
+          <ul>
+            <li><strong>完全リモート／自由参加型</strong></li>
+            <li><strong>毎日5分でもOK</strong> — 小さなアウトプットを継続（例：コード1行、デザイン案1枚、AIプロンプト1個）</li>
+            <li><strong>コミュニケーション：</strong>基本は <span class="kbd">Slack</span> でチャット、<span class="kbd">週1回オンラインMTG</span>（雑談・疑問共有・Q&A）</li>
+            <li>年齢性別不問／無償（趣味の延長で参加できる方）</li>
+            <li><strong>最終意思決定権は代表に一任</strong></li>
+            <li>1ヶ月単位で参加継続の意思を相互に確認</li>
+            <li>将来的にチームでSNS発信・YouTubeなども検討</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>応募条件</h2>
+        <div class="card">
+          <ul>
+            <li><strong>GitHub</strong> での開発・管理（Pull Request／Issue／Commit など）ができる</li>
+            <li><strong>Slack</strong> でチャット連携できる（Discordでの音声MTGも可）</li>
+            <li>指示を正確に理解し、柔軟に対応できる</li>
+            <li>チームの方向性を尊重し、協調的に進められる</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>応募方法</h2>
+        <div class="card">
+          <p>以下いずれかからご連絡ください：</p>
+          <ul>
+            <li>X（Twitter）DM：<a href="https://x.com/gamutukurita" target="_blank" rel="noopener">@gamutukurita</a></li>
+          </ul>
+          <div class="cta">
+            <a class="btn btn--primary" href="https://x.com/gamutukurita" target="_blank" rel="noopener">DMを送る</a>
+            <a class="btn btn--ghost" href="https://wakapai-game.github.io/mygame/" target="_blank" rel="noopener">プロジェクトを見る</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>キーワード</h2>
+        <div class="taglist">
+          <span class="tag">#AI開発</span>
+          <span class="tag">#コンセプトアート</span>
+          <span class="tag">#ブラウザゲーム</span>
+          <span class="tag">#LLM</span>
+          <span class="tag">#StableDiffusion</span>
+          <span class="tag">#ゲームプログラマー</span>
+          <span class="tag">#AIエージェント</span>
+          <span class="tag">#GitHub</span>
+          <span class="tag">#Slack</span>
+          <span class="tag">#Discord</span>
+          <span class="tag">#対戦システム</span>
+          <span class="tag">#コマンドバトル</span>
+          <span class="tag">#プロトタイプ開発</span>
+          <span class="tag">#継続開発</span>
+          <span class="tag">#個人ゲーム制作</span>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 共通フッター -->
+  <div data-include="/partials/footer.html"></div>
+
+  <!-- 共通パーツの読み込み -->
+  <script defer src="/assets/js/include.js"></script>
+</body>
+</html>
