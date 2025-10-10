@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>パーティ選択</title>
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <style>
+    /* 画面全体の背景（このページ限定） */
+    body.party {
+      background: url("./assets/img/party-stage.jpg") center/cover no-repeat fixed;
+    }
+
+    /* ステージ（ホットスポットを載せる土台） */
+    .stage {
+      position: relative;
+      max-width: 980px;           /* PC想定の最大幅 */
+      margin: 5vh auto 8vh;       /* 画面中央寄せ */
+      aspect-ratio: 16 / 9;       /* 画像に近い比率で箱を維持 */
+      /* 背景画像は body に敷いているので .stage は透明でOK */
+    }
+
+    /* 石台スロットの共通スタイル（視覚的な当たり判定＋ホバー） */
+    .slot {
+      position: absolute;
+      left: calc(var(--x) * 1%);
+      top:  calc(var(--y) * 1%);
+      transform: translate(-50%, -50%);
+      width: 18%;                 /* スロットの大きさ。必要なら微調整 */
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 2px dashed rgba(255,255,255,0.35);
+      cursor: pointer;
+      outline: none;
+      transition: box-shadow .2s ease, transform .08s ease, background .2s ease;
+    }
+    .slot:hover,
+    .slot:focus-visible {
+      background: rgba(255,255,255,0.12);
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.2), 0 8px 22px rgba(0,0,0,.35);
+    }
+    .slot:active { transform: translate(-50%, -50%) scale(0.98); }
+
+    /* ラベル（石の下に“未選択”などを表示） */
+    .slot-label {
+      position: absolute;
+      left: calc(var(--x) * 1%);
+      top:  calc(var(--y) * 1% + 8%); /* 石の少し下にずらす */
+      transform: translate(-50%, 0);
+      color: #fff;
+      font-weight: 600;
+      text-shadow: 0 2px 8px rgba(0,0,0,.7);
+      pointer-events: none; /* クリックはスロットに通す */
+    }
+
+    /* 画面下部の操作エリア */
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin: 0 auto 6vh;
+      padding: 0 16px;
+    }
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .2s ease, opacity .2s;
+    }
+    .btn-primary {
+      background: #fff;
+      color: #0b0f16;
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,0,0,.35); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.35);
+    }
+    .btn[disabled] { opacity: .5; cursor: not-allowed; }
+  </style>
+</head>
+
+<body class="party">
+  <!-- 共通ヘッダー -->
+  <div data-include="/partials/header.html"></div>
+
+  <main>
+    <!-- ステージ。ここに6つの「見えないボタン」を座標指定で配置 -->
+    <section class="stage" aria-label="パーティ選択ステージ">
+      <!-- 上段3つ -->
+      <button class="slot" style="--x:20; --y:38;"  data-slot="0" aria-label="スロット1：未選択"></button>
+      <span class="slot-label" style="--x:20; --y:38;">未選択</span>
+
+      <button class="slot" style="--x:50; --y:30;"  data-slot="1" aria-label="スロット2：未選択"></button>
+      <span class="slot-label" style="--x:50; --y:30;">未選択</span>
+
+      <button class="slot" style="--x:80; --y:38;"  data-slot="2" aria-label="スロット3：未選択"></button>
+      <span class="slot-label" style="--x:80; --y:38;">未選択</span>
+
+      <!-- 下段3つ -->
+      <button class="slot" style="--x:20; --y:70;"  data-slot="3" aria-label="スロット4：未選択"></button>
+      <span class="slot-label" style="--x:20; --y:70;">未選択</span>
+
+      <button class="slot" style="--x:50; --y:63;"  data-slot="4" aria-label="スロット5：未選択"></button>
+      <span class="slot-label" style="--x:50; --y:63;">未選択</span>
+
+      <button class="slot" style="--x:80; --y:70;"  data-slot="5" aria-label="スロット6：未選択"></button>
+      <span class="slot-label" style="--x:80; --y:70;">未選択</span>
+    </section>
+
+    <!-- 画面下の操作 -->
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="history.back()">戻る</button>
+      <button id="nextBtn" class="btn btn-primary" disabled>次へ（技選択）</button>
+    </div>
+  </main>
+
+  <!-- 共通フッター -->
+  <div data-include="/partials/footer.html"></div>
+
+  <!-- 共通パーツの読み込み -->
+  <script defer src="/assets/js/include.js"></script>
+
+  <!-- 最小のクリック処理：今は“選択済み”トグルとボタン活性化のみ -->
+  <script>
+    (function () {
+      const state = Array(6).fill(null); // 6スロット（まだモンスター未選択）
+      const nextBtn = document.getElementById('nextBtn');
+
+      // スロットのクリックで「仮選択/解除」。本実装ではここでモーダルを開く
+      document.addEventListener('click', (e) => {
+        const slot = e.target.closest('.slot');
+        if (!slot) return;
+
+        const i = Number(slot.dataset.slot);
+        const chosen = state[i] !== null;
+
+        // 仮のトグル（選択→解除）
+        state[i] = chosen ? null : { id: 'TEMP', name: 'モンスター' + (i + 1) };
+
+        // 見た目更新
+        const label = slot.nextElementSibling; // 直後の .slot-label
+        if (state[i]) {
+          slot.style.border = '2px solid rgba(255,255,255,0.9)';
+          slot.style.background = 'rgba(255,255,255,0.18)';
+          label.textContent = state[i].name;
+          slot.setAttribute('aria-label', `スロット${i+1}：${state[i].name} 選択中`);
+        } else {
+          slot.style.border = '2px dashed rgba(255,255,255,0.35)';
+          slot.style.background = 'rgba(255,255,255,0.04)';
+          label.textContent = '未選択';
+          slot.setAttribute('aria-label', `スロット${i+1}：未選択`);
+        }
+
+        // 1体以上選択で「次へ」活性化（条件は後で変更OK）
+        const selectedCount = state.filter(Boolean).length;
+        nextBtn.disabled = selectedCount === 0;
+      });
+
+      // 次へ：ここで実際は選択データを保存して遷移する
+      nextBtn.addEventListener('click', () => {
+        // 例：localStorage に保存（ビルドなしで手軽）
+        localStorage.setItem('party', JSON.stringify(state.filter(Boolean)));
+        // 技選択ページへ（仮のURL。実ファイルに合わせて変更）
+        location.href = './moves-select.html';
+      });
+    })();
+  </script>
+</body>
+</html>
