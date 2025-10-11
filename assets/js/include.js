@@ -1,8 +1,14 @@
 // ビルドなしでヘッダー/フッターを差し込む最小スクリプト
 (function () {
-  // 公開時（/mygame配下）でも動くようにベースを決める
   const isLocal = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
-  const BASE = isLocal ? '' : '/mygame';
+
+  function getBasePath() {
+    if (isLocal) return '';
+    const segments = location.pathname.split('/').filter(Boolean);
+    return segments.length ? '/' + segments[0] : '';
+  }
+
+  const BASE = getBasePath();
 
   async function inject() {
     const nodes = document.querySelectorAll('[data-include]');
@@ -29,11 +35,12 @@
   }
 })();
 
-// おまけ：公開時だけ "/mygame" を絶対パスに前置
+// おまけ：公開時だけ 公開ディレクトリ名 を絶対パスに前置
 (function fixAbsoluteLinks() {
   const isLocal = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
   if (isLocal) return;
-  const BASE = '/mygame';
+  const segments = location.pathname.split('/').filter(Boolean);
+  const BASE = segments.length ? '/' + segments[0] : '';
   const sel = ['a[href^="/"]', 'link[href^="/"]', 'script[src^="/"]', 'img[src^="/"]'];
   document.querySelectorAll(sel.join(',')).forEach(el => {
     const attr = el.hasAttribute('href') ? 'href' : 'src';
