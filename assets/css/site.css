@@ -7,20 +7,41 @@
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic UI",Meiryo,sans-serif;line-height:1.6}
 
-/* Header */
-.site-header{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:linear-gradient(180deg,rgba(11,15,22,.95),rgba(11,15,22,.6));backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
-.brand{display:flex;gap:.6rem;align-items:center;color:#fff;text-decoration:none;font-weight:800;letter-spacing:.2px}
-.brand__logo{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+/* Header（PC） */
+.site-header{
+  position:sticky; top:0; z-index:50;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.8rem 1rem;
+  background:linear-gradient(180deg,rgba(11,15,22,.95),rgba(11,15,22,.6));
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border)
+}
+.brand{display:flex; gap:.6rem; align-items:center; color:#fff; text-decoration:none; font-weight:800}
+.brand__logo{display:grid; place-items:center; width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,var(--brand),var(--brand2))}
 .brand__text{font-size:1.05rem}
-.nav{display:flex;gap:.8rem}
-.nav a{color:#fff;opacity:.9;text-decoration:none}
+.nav{display:flex; gap:.8rem}          /* PCは常時表示 */
+.nav a{color:#fff; opacity:.9; text-decoration:none}
 .nav a:hover{opacity:1}
 .nav-toggle{display:none}
+
+/* スマホ時は閉じた状態から */
 @media (max-width:920px){
-  .nav-toggle{display:inline-grid;place-items:center;width:44px;height:36px;background:var(--glass);color:#fff;border:1px solid var(--border);border-radius:8px}
-  .nav{position:fixed;inset:56px 0 auto 0;background:rgba(11,15,22,.96);border-bottom:1px solid var(--border);padding:1rem;display:none;flex-direction:column}
-  .nav[aria-expanded="true"]{display:flex}
+  .nav-toggle{
+    display:inline-grid; place-items:center;
+    width:44px; height:36px; background:var(--glass);
+    color:#fff; border:1px solid var(--border); border-radius:8px
+  }
+  .nav{
+    position:fixed; inset:56px 0 auto 0;
+    display:none;                       /* 初期は非表示！ */
+    flex-direction:column; gap:12px;
+    padding:12px 16px;
+    background:rgba(11,15,22,.96);
+    border-bottom:1px solid var(--border)
+  }
+  .nav[aria-expanded="true"]{ display:flex } /* ボタンで開く */
 }
+
 
 /* Decorative BG */
 .bg{position:fixed;inset:0;z-index:-1;overflow:hidden}

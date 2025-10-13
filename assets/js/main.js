@@ -85,3 +85,28 @@ if(toggleFull && demoFrame){
     else { await document.exitFullscreen?.(); }
   });
 }
+
+// ヘッダーのメニュー開閉（委譲でOK：partialsを差し込んだ後でも動く）
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.nav-toggle');
+  if (!btn) return;
+
+  const isOpen = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!isOpen));
+
+  const nav = document.getElementById('nav');
+  if (nav) nav.setAttribute('aria-expanded', String(!isOpen));
+});
+
+// メニュー内のリンクを押したら閉じる（スマホの使い勝手）
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('.nav a');
+  if (!link) return;
+  const btn = document.querySelector('.nav-toggle');
+  const nav = document.getElementById('nav');
+  if (btn && nav) {
+    btn.setAttribute('aria-expanded', 'false');
+    nav.setAttribute('aria-expanded', 'false');
+  }
+});
+
