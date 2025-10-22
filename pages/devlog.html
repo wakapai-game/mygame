@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ゲーム開発日記</title>
+  <meta name="description" content="Xの「#wakaのゲーム開発日記」タグ付き投稿を新着順で表示します。" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <style>
+    body.concept {
+      background: linear-gradient(180deg, #0b0f1a, #0f1320);
+      color: #e9ecf1;
+      font-family: system-ui, "Hiragino Sans", "Noto Sans JP", sans-serif;
+      line-height: 1.7;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px 72px;
+    }
+    section {
+      margin: 48px 0;
+    }
+    h1, h2, h3 {
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 1.9rem; }
+    h2 { font-size: 1.4rem; border-left: 4px solid #6ad1ff; padding-left: 8px; margin-top: 40px; }
+    h3 { font-size: 1.15rem; color: #a0ffb3; margin-top: 30px; }
+    p, li { color: #e9ecf1; }
+    ul, ol { margin-left: 20px; }
+    .card {
+      background: rgba(21, 26, 44, 0.8);
+      border: 1px solid #232b45;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+
+<body>
+  <!-- 共通ヘッダー -->
+  <div data-include="../partials/header.html"></div>
+
+  <main class="wrap">
+    <h1>ゲーム開発日記</h1>
+    <p class="note">Xの「#wakaのゲーム開発日記」タグ付き投稿を新着順で表示します。</p>
+
+    <!-- 検索タイムライン埋め込み（from:ユーザー AND タグ 完全一致） -->
+    <a class="twitter-timeline"
+       data-theme="light"
+       data-chrome="noheader nofooter noborders transparent"
+       data-tweet-limit="20"
+       href="https://twitter.com/search?q=(from%3Agamutukurita)%20%22%23waka%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E9%96%8B%E7%99%BA%E6%97%A5%E8%A8%98%22&f=live">
+      #wakaのゲーム開発日記 - X 検索結果
+    </a>
+
+    <!-- 代替リンク（ウィジェットがブロックされた環境向け） -->
+    <p class="note">
+      うまく表示されない場合は
+      <a target="_blank" rel="noopener"
+         href="https://twitter.com/search?q=(from%3Agamutukurita)%20%22%23waka%E3%81%AE%E3%82%B2%E3%83%BC%E3%83%A0%E9%96%8B%E7%99%BA%E6%97%A5%E8%A8%98%22&f=live">
+        こちら
+      </a> を開いてください。
+    </p>
+  </main>
+
+  <!-- 共通フッター -->
+  <div data-include="../partials/footer.html"></div>
+  <script defer src="../assets/js/include.js"></script>
+</body>
+
+</html>
