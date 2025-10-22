@@ -123,12 +123,6 @@
     </div>
   </main>
 
-  <!-- 共通フッター -->
-  <div data-include="/partials/footer.html"></div>
-
-  <!-- 共通パーツの読み込み -->
-  <script defer src="/assets/js/include.js"></script>
-
   <!-- 最小のクリック処理：今は“選択済み”トグルとボタン活性化のみ -->
   <script>
     (function () {
@@ -173,6 +167,10 @@
         location.href = './moves-select.html';
       });
     })();
-  </script>
+        <div data-include="partials/footer.html"></div>
+    </script>
+
+    <!-- 共通パーツの読み込み -->
+     <script defer src="assets/js/include.js"></script>
 </body>
 </html>
