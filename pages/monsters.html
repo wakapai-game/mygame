@@ -2,19 +2,83 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>モンスター一覧</title>
-  <link rel="stylesheet" href="/assets/css/site.css" />
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <style>
+    /* 一覧用の簡易スタイル */
+    #monster-list {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      padding: 16px;
+    }
+    .monster-card {
+      text-align: center;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 8px;
+      background: #111;
+    }
+    .monster-card img {
+      width: 100%;
+      height: auto;
+    }
+    .monster-name {
+      margin-top: 8px;
+      font-weight: bold;
+    }
+    .monster-attr {
+      color: #aaa;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
 <body>
-  <div data-include="/partials/header.html"></div>
+  <!-- 共通ヘッダー -->
+  <div data-include="../partials/header.html"></div>
 
   <main>
     <h1>モンスター一覧</h1>
-    <p>ここに一覧を出します（まずはダミーでOK）。</p>
+    <div id="monster-list"></div>
   </main>
 
-  <div data-include="/partials/footer.html"></div>
-  <script defer src="/assets/js/include.js"></script>
+  <!-- 共通フッター -->
+  <div data-include="../partials/footer.html"></div>
+  <script defer src="../assets/js/include.js"></script>
+  <script defer src="../data/monsters.js"></script>
+  <script>
+  // 一覧を描画する関数
+  function renderMonsters() {
+    const listEl = document.getElementById('monster-list');
+    if (!window.MONSTERS || !listEl) return;
+    window.MONSTERS.forEach(mon => {
+      const card = document.createElement('div');
+      card.className = 'monster-card';
+      // 正面画像は `<id>_mae.png` を参照
+      const img = document.createElement('img');
+      img.src = '../assets/img/monster/' + mon.id + '/' + mon.id + '_pose.png';
+      //img.src = '../assets/img/monster/m001/m001_pose.png';
+      img.alt = mon.name;
+      card.appendChild(img);
+      // 名前と属性
+      const nameEl = document.createElement('div');
+      nameEl.className = 'monster-name';
+      nameEl.textContent = mon.name;
+      card.appendChild(nameEl);
+      const attrEl = document.createElement('div');
+      attrEl.className = 'monster-attr';
+      attrEl.textContent = '属性: ' + mon.attr;
+      card.appendChild(attrEl);
+      listEl.appendChild(card);
+    });
+  }
+  // DOMとデータ読み込み後に描画
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMonsters);
+  } else {
+    renderMonsters();
+  }
+  </script>
 </body>
 </html>
