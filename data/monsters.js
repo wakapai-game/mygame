@@ -1,6 +1,6 @@
 window.MONSTERS = [
   { id:"m001", name:"エンレン", attr:"炎", hp:120, st:80, atk:18, def:10, mag:6,  spd:12 },
-  { id:"m002", name:"アクアリス",   attr:"水", hp:110, st:90, atk:12, def:12, mag:16, spd:11 },
+  { id:"m002", name:"マカイア",   attr:"水", hp:110, st:90, atk:12, def:12, mag:16, spd:11 },
   { id:"m003", name:"ゲイルバード", attr:"風", hp:95,  st:85, atk:14, def:10, mag:14, spd:18 },
   { id:"m004", name:"ロックホーン", attr:"土", hp:140, st:70, atk:16, def:18, mag:4,  spd:8  },
   { id:"m005", name:"サンダーキッド", attr:"雷", hp:105, st:100, atk:15, def:10, mag:12, spd:16 },
